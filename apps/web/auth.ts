@@ -6,6 +6,7 @@ import Credentials from 'next-auth/providers/credentials';
 import GitHub from 'next-auth/providers/github';
 import Google from 'next-auth/providers/google';
 import { signInSchema } from './lib/zod';
+import Resend from 'next-auth/providers/resend';
 
 const nextAuth = NextAuth({
 	adapter: PrismaAdapter(prisma),
@@ -45,11 +46,15 @@ const nextAuth = NextAuth({
 		}),
 		GitHub,
 		Google,
+		Resend({
+			apiKey: process.env.AUTH_RESEND_KEY,
+			from: 'noreply@info.tattek.sk',
+		}),
 	],
 	session: { strategy: 'jwt' },
 	callbacks: {
 		authorized({ request, auth }) {
-			const publicRoutes = ['/login', '/', '/register', '/about'];
+			const publicRoutes = ['/login', '/', '/register', '/forgot-password'];
 			const { pathname } = request.nextUrl;
 			if (!publicRoutes.includes(pathname) && !auth) {
 				return NextResponse.redirect(new URL('/login', request.url));

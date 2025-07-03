@@ -1,6 +1,6 @@
 'use server';
 
-import bcrypt, { compare } from 'bcryptjs';
+import { compare } from 'bcryptjs';
 import { prisma } from '@workspace/database';
 import { signIn } from '@/auth';
 import { signInSchema } from '@/lib/zod';
@@ -52,7 +52,7 @@ export async function logIn(formData: FormData): Promise<ActionResult> {
 		if (err?.digest?.startsWith('NEXT_REDIRECT')) {
 			redirect('/');
 		} else {
-			console.error('[SIGN_UP_ERROR]', err);
+			console.error('[LOG_IN_ERROR]', err);
 			return {
 				success: false,
 				error: 'Something went wrong. Please try again later.',
