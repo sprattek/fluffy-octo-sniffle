@@ -1,15 +1,51 @@
-export const runtime = 'nodejs';
-
 import NextAuth, { NextAuthResult } from 'next-auth';
+import { NextResponse } from 'next/server';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import { prisma } from '@workspace/database';
 import Credentials from 'next-auth/providers/credentials';
 import GitHub from 'next-auth/providers/github';
-import { NextResponse } from 'next/server';
+import Google from 'next-auth/providers/google';
+import { signInSchema } from './lib/zod';
 
 const nextAuth = NextAuth({
 	adapter: PrismaAdapter(prisma),
-	providers: [Credentials, GitHub],
+	providers: [
+		Credentials({
+			credentials: {
+				email: {
+					type: 'email',
+					label: 'Email',
+					placeholder: 'johndoe@gmail.com',
+					required: true,
+					minLength: 3,
+				},
+				password: {
+					type: 'password',
+					label: 'Password',
+					placeholder: '*****',
+					required: true,
+					minLength: 8,
+					maxLength: 32,
+				},
+			},
+			authorize: async (credentials) => {
+				try {
+					const { email } = await signInSchema.parseAsync(credentials);
+
+					const user = await prisma.user.findUnique({
+						where: { email },
+					});
+
+					return user;
+				} catch (error) {
+					console.log(error);
+					return null;
+				}
+			},
+		}),
+		GitHub,
+		Google,
+	],
 	session: { strategy: 'jwt' },
 	callbacks: {
 		authorized({ request, auth }) {
@@ -25,6 +61,7 @@ const nextAuth = NextAuth({
 			return token;
 		},
 	},
+	secret: process.env.AUTH_SECRET,
 });
 
 export const handlers: NextAuthResult['handlers'] = nextAuth.handlers;

@@ -1,3 +1,5 @@
+'use client';
+
 import { cn } from '@workspace/ui/lib/utils';
 import { Button } from '@workspace/ui/components/button';
 import {
@@ -9,32 +11,47 @@ import {
 } from '@workspace/ui/components/card';
 import { Input } from '@workspace/ui/components/input';
 import { Label } from '@workspace/ui/components/label';
-import { prisma } from '@workspace/database';
 import Link from 'next/link';
+import { signUp } from '@/app/register/actions';
+import { useActionState, useEffect, useState, useTransition } from 'react';
+import { Loader2Icon } from 'lucide-react';
+import { toast } from 'sonner';
+
+const initialState = { success: false, error: '' };
 
 export function RegisterForm({
 	className,
 	...props
 }: React.ComponentProps<'div'>) {
-	const onSignup = async (formData: FormData) => {
-		'use server';
+	const [state, formAction] = useActionState(
+		(_prevState: any, formData: FormData) => signUp(formData),
+		initialState
+	);
+	const [isPending, startTransition] = useTransition();
+	const [form, setForm] = useState({
+		name: '',
+		email: '',
+		password: '',
+		passwordConfirm: '',
+	});
 
-		const name = formData.get('name') as string;
-		const email = formData.get('email') as string;
-		const password = formData.get('password') as string;
-		const passwordConfirm = formData.get('password-confirm') as string;
-
-		if (
-			!email ||
-			!password ||
-			!name ||
-			!passwordConfirm ||
-			password !== passwordConfirm
-		)
-			return;
-
-		console.log('signup', email, password, name);
+	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const { name, value } = e.target;
+		setForm((prev) => ({ ...prev, [name]: value }));
 	};
+
+	// 🎯 Show toast on state change
+	useEffect(() => {
+		if (state?.success) {
+			toast.message('Registration successful 🎉', {
+				description: 'Welcome! Redirecting...',
+			});
+		} else if (state?.error) {
+			toast.error('Registration failed', {
+				description: state.error,
+			});
+		}
+	}, [state, toast]);
 
 	return (
 		<div className={cn('flex flex-col gap-6', className)} {...props}>
@@ -44,7 +61,11 @@ export function RegisterForm({
 					<CardDescription>Create a new account</CardDescription>
 				</CardHeader>
 				<CardContent>
-					<form action={onSignup}>
+					<form
+						action={(formData) => {
+							startTransition(() => formAction(formData));
+						}}
+					>
 						<div className='grid gap-6'>
 							<div className='grid gap-6'>
 								<div className='grid gap-3'>
@@ -54,6 +75,8 @@ export function RegisterForm({
 										name='name'
 										id='name'
 										type='text'
+										value={form.name}
+										onChange={handleChange}
 										placeholder='John Doe'
 										required
 									/>
@@ -65,6 +88,8 @@ export function RegisterForm({
 										name='email'
 										id='email'
 										type='email'
+										value={form.email}
+										onChange={handleChange}
 										placeholder='m@example.com'
 										required
 									/>
@@ -78,25 +103,38 @@ export function RegisterForm({
 										name='password'
 										id='password'
 										type='password'
+										value={form.password}
+										onChange={handleChange}
 										required
 									/>
 								</div>
 								<div className='grid gap-3'>
 									<div className='flex items-center'>
-										<Label htmlFor='password-confirm'>
+										<Label htmlFor='passwordConfirm'>
 											Password Confirmation
 										</Label>
 									</div>
 									<Input
-										aria-describedby='password-confirmation'
-										name='password-confirm'
-										id='password-confirm'
+										aria-describedby='passwordConfirm'
+										name='passwordConfirm'
+										id='passwordConfirm'
 										type='password'
+										value={form.passwordConfirm}
+										onChange={handleChange}
 										required
 									/>
 								</div>
-								<Button type='submit' className='w-full'>
-									Signup
+
+								{!state?.success && state?.error && (
+									<p className='text-sm text-red-500'>{state.error}</p>
+								)}
+
+								<Button type='submit' disabled={isPending} className='w-full'>
+									{isPending ? (
+										<Loader2Icon className='animate-spin' />
+									) : (
+										'Sign up'
+									)}
 								</Button>
 							</div>
 							<div className='text-center text-sm'>
