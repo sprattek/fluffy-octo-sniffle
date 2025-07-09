@@ -3,7 +3,7 @@
 import bcrypt from 'bcryptjs';
 import { prisma } from '@workspace/database';
 import { signIn } from '@/auth';
-import { signUpSchema } from '@/lib/zod';
+import { signUpSchema } from '@/lib/validations/auth';
 import { redirect } from 'next/navigation';
 
 type ActionResult = { success: true } | { success: false; error: string };

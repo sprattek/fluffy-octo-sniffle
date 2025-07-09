@@ -16,21 +16,22 @@ datasource db {
 }
 
 model User {
-  id            String          @id @default(cuid())
-  name          String?
-  email         String          @unique
-  emailVerified DateTime?
-  password      String?
-  image         String?
-  role          Role     @default(USER)
-  firepits      Firepit[]
-  accounts      Account[]
-  sessions      Session[]
+  id                String          @id @default(cuid())
+  name              String?
+  email             String          @unique
+  emailVerified     DateTime?
+  password          String?
+  image             String?
+  role              Role            @default(USER)
+  createdFirepits   Firepit[]       @relation("CreatedBy")
+  ownedFirepits     Firepit[]       @relation("Owner")
+  accounts          Account[]
+  sessions          Session[]
   // Optional for WebAuthn support
-  Authenticator Authenticator[]
+  Authenticator     Authenticator[]
  
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
 }
 
 model Account {
@@ -46,22 +47,22 @@ model Account {
   id_token          String?
   session_state     String?
  
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
  
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User @relation(fields: [userId], references: [id], onDelete: Cascade)
  
   @@id([provider, providerAccountId])
 }
  
 model Session {
-  sessionToken String   @unique
-  userId       String
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sessionToken  String   @unique
+  userId        String
+  expires       DateTime
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
  
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
  
 model VerificationToken {
@@ -74,31 +75,36 @@ model VerificationToken {
  
 // Optional for WebAuthn support
 model Authenticator {
-  credentialID         String  @unique
-  userId               String
-  providerAccountId    String
-  credentialPublicKey  String
-  counter              Int
-  credentialDeviceType String
-  credentialBackedUp   Boolean
-  transports           String?
+  credentialID          String    @unique
+  userId                String
+  providerAccountId     String
+  credentialPublicKey   String
+  counter               Int
+  credentialDeviceType  String
+  credentialBackedUp    Boolean
+  transports            String?
  
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
  
   @@id([userId, credentialID])
 }
 
 model Firepit {
-  id          String   @id @default(cuid())
-  name        String
-  description String?
-  latitude    Float
-  longitude   Float
-  city        String
-  pricePerDay Float?
-  ownerId     String
-  owner       User     @relation(fields: [ownerId], references: [id])
-  createdAt   DateTime @default(now())
+  id                        String   @id @default(cuid())
+  name                      String
+  description               String?
+  latitude                  Float
+  longitude                 Float
+  location                  Unsupported("geometry")?
+  city                      String
+  pricePerDay               Float?
+  optimalNumberOfVisitors   Int?
+  createdById               String
+  createdBy                 User      @relation("CreatedBy", fields: [createdById], references: [id])
+  ownerId                   String?
+  owner                     User?     @relation("Owner", fields: [ownerId], references: [id])
+  createdAt                 DateTime  @default(now())
+  updatedAt                 DateTime  @updatedAt
 }
 
 enum Role {

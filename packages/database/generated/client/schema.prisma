@@ -16,20 +16,19 @@ datasource db {
 }
 
 model User {
-  id                  String          @id @default(cuid())
-  name                String?
-  email               String          @unique
-  emailVerified       DateTime?
-  password            String?
-  resetToken          String?
-  resetTokenExpiresAt Int?
-  image               String?
-  role                Role            @default(USER)
-  firepits            Firepit[]
-  accounts            Account[]
-  sessions            Session[]
+  id              String          @id @default(cuid())
+  name            String?
+  email           String          @unique
+  emailVerified   DateTime?
+  password        String?
+  image           String?
+  role            Role            @default(USER)
+  createdFirepits Firepit[]       @relation("CreatedBy")
+  ownedFirepits   Firepit[]       @relation("Owner")
+  accounts        Account[]
+  sessions        Session[]
   // Optional for WebAuthn support
-  Authenticator       Authenticator[]
+  Authenticator   Authenticator[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -91,16 +90,21 @@ model Authenticator {
 }
 
 model Firepit {
-  id          String   @id @default(cuid())
-  name        String
-  description String?
-  latitude    Float
-  longitude   Float
-  city        String
-  pricePerDay Float?
-  ownerId     String
-  owner       User     @relation(fields: [ownerId], references: [id])
-  createdAt   DateTime @default(now())
+  id                      String                   @id @default(cuid())
+  name                    String
+  description             String?
+  latitude                Float
+  longitude               Float
+  location                Unsupported("geometry")?
+  city                    String
+  pricePerDay             Float?
+  optimalNumberOfVisitors Int?
+  createdById             String
+  createdBy               User                     @relation("CreatedBy", fields: [createdById], references: [id])
+  ownerId                 String?
+  owner                   User?                    @relation("Owner", fields: [ownerId], references: [id])
+  createdAt               DateTime                 @default(now())
+  updatedAt               DateTime                 @updatedAt
 }
 
 enum Role {

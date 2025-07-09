@@ -304,8 +304,8 @@ export namespace Prisma {
   export import Exact = $Public.Exact
 
   /**
-   * Prisma Client JS version: 6.11.0
-   * Query Engine version: 9c30299f5a0ea26a96790e13f796dc6094db3173
+   * Prisma Client JS version: 6.11.1
+   * Query Engine version: f40f79ec31188888a2e33acda0ecc8fd10a853a9
    */
   export type PrismaVersion = {
     client: string
@@ -1342,14 +1342,16 @@ export namespace Prisma {
    */
 
   export type UserCountOutputType = {
-    firepits: number
+    createdFirepits: number
+    ownedFirepits: number
     accounts: number
     sessions: number
     Authenticator: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    firepits?: boolean | UserCountOutputTypeCountFirepitsArgs
+    createdFirepits?: boolean | UserCountOutputTypeCountCreatedFirepitsArgs
+    ownedFirepits?: boolean | UserCountOutputTypeCountOwnedFirepitsArgs
     accounts?: boolean | UserCountOutputTypeCountAccountsArgs
     sessions?: boolean | UserCountOutputTypeCountSessionsArgs
     Authenticator?: boolean | UserCountOutputTypeCountAuthenticatorArgs
@@ -1369,7 +1371,14 @@ export namespace Prisma {
   /**
    * UserCountOutputType without action
    */
-  export type UserCountOutputTypeCountFirepitsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type UserCountOutputTypeCountCreatedFirepitsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: FirepitWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountOwnedFirepitsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: FirepitWhereInput
   }
 
@@ -1405,18 +1414,8 @@ export namespace Prisma {
 
   export type AggregateUser = {
     _count: UserCountAggregateOutputType | null
-    _avg: UserAvgAggregateOutputType | null
-    _sum: UserSumAggregateOutputType | null
     _min: UserMinAggregateOutputType | null
     _max: UserMaxAggregateOutputType | null
-  }
-
-  export type UserAvgAggregateOutputType = {
-    resetTokenExpiresAt: number | null
-  }
-
-  export type UserSumAggregateOutputType = {
-    resetTokenExpiresAt: number | null
   }
 
   export type UserMinAggregateOutputType = {
@@ -1425,8 +1424,6 @@ export namespace Prisma {
     email: string | null
     emailVerified: Date | null
     password: string | null
-    resetToken: string | null
-    resetTokenExpiresAt: number | null
     image: string | null
     role: $Enums.Role | null
     createdAt: Date | null
@@ -1439,8 +1436,6 @@ export namespace Prisma {
     email: string | null
     emailVerified: Date | null
     password: string | null
-    resetToken: string | null
-    resetTokenExpiresAt: number | null
     image: string | null
     role: $Enums.Role | null
     createdAt: Date | null
@@ -1453,8 +1448,6 @@ export namespace Prisma {
     email: number
     emailVerified: number
     password: number
-    resetToken: number
-    resetTokenExpiresAt: number
     image: number
     role: number
     createdAt: number
@@ -1463,22 +1456,12 @@ export namespace Prisma {
   }
 
 
-  export type UserAvgAggregateInputType = {
-    resetTokenExpiresAt?: true
-  }
-
-  export type UserSumAggregateInputType = {
-    resetTokenExpiresAt?: true
-  }
-
   export type UserMinAggregateInputType = {
     id?: true
     name?: true
     email?: true
     emailVerified?: true
     password?: true
-    resetToken?: true
-    resetTokenExpiresAt?: true
     image?: true
     role?: true
     createdAt?: true
@@ -1491,8 +1474,6 @@ export namespace Prisma {
     email?: true
     emailVerified?: true
     password?: true
-    resetToken?: true
-    resetTokenExpiresAt?: true
     image?: true
     role?: true
     createdAt?: true
@@ -1505,8 +1486,6 @@ export namespace Prisma {
     email?: true
     emailVerified?: true
     password?: true
-    resetToken?: true
-    resetTokenExpiresAt?: true
     image?: true
     role?: true
     createdAt?: true
@@ -1552,18 +1531,6 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
-     * Select which fields to average
-    **/
-    _avg?: UserAvgAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to sum
-    **/
-    _sum?: UserSumAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
      * Select which fields to find the minimum value
     **/
     _min?: UserMinAggregateInputType
@@ -1594,8 +1561,6 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: UserCountAggregateInputType | true
-    _avg?: UserAvgAggregateInputType
-    _sum?: UserSumAggregateInputType
     _min?: UserMinAggregateInputType
     _max?: UserMaxAggregateInputType
   }
@@ -1606,15 +1571,11 @@ export namespace Prisma {
     email: string
     emailVerified: Date | null
     password: string | null
-    resetToken: string | null
-    resetTokenExpiresAt: number | null
     image: string | null
     role: $Enums.Role
     createdAt: Date
     updatedAt: Date
     _count: UserCountAggregateOutputType | null
-    _avg: UserAvgAggregateOutputType | null
-    _sum: UserSumAggregateOutputType | null
     _min: UserMinAggregateOutputType | null
     _max: UserMaxAggregateOutputType | null
   }
@@ -1639,13 +1600,12 @@ export namespace Prisma {
     email?: boolean
     emailVerified?: boolean
     password?: boolean
-    resetToken?: boolean
-    resetTokenExpiresAt?: boolean
     image?: boolean
     role?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    firepits?: boolean | User$firepitsArgs<ExtArgs>
+    createdFirepits?: boolean | User$createdFirepitsArgs<ExtArgs>
+    ownedFirepits?: boolean | User$ownedFirepitsArgs<ExtArgs>
     accounts?: boolean | User$accountsArgs<ExtArgs>
     sessions?: boolean | User$sessionsArgs<ExtArgs>
     Authenticator?: boolean | User$AuthenticatorArgs<ExtArgs>
@@ -1658,8 +1618,6 @@ export namespace Prisma {
     email?: boolean
     emailVerified?: boolean
     password?: boolean
-    resetToken?: boolean
-    resetTokenExpiresAt?: boolean
     image?: boolean
     role?: boolean
     createdAt?: boolean
@@ -1672,8 +1630,6 @@ export namespace Prisma {
     email?: boolean
     emailVerified?: boolean
     password?: boolean
-    resetToken?: boolean
-    resetTokenExpiresAt?: boolean
     image?: boolean
     role?: boolean
     createdAt?: boolean
@@ -1686,17 +1642,16 @@ export namespace Prisma {
     email?: boolean
     emailVerified?: boolean
     password?: boolean
-    resetToken?: boolean
-    resetTokenExpiresAt?: boolean
     image?: boolean
     role?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "email" | "emailVerified" | "password" | "resetToken" | "resetTokenExpiresAt" | "image" | "role" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "email" | "emailVerified" | "password" | "image" | "role" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    firepits?: boolean | User$firepitsArgs<ExtArgs>
+    createdFirepits?: boolean | User$createdFirepitsArgs<ExtArgs>
+    ownedFirepits?: boolean | User$ownedFirepitsArgs<ExtArgs>
     accounts?: boolean | User$accountsArgs<ExtArgs>
     sessions?: boolean | User$sessionsArgs<ExtArgs>
     Authenticator?: boolean | User$AuthenticatorArgs<ExtArgs>
@@ -1708,7 +1663,8 @@ export namespace Prisma {
   export type $UserPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "User"
     objects: {
-      firepits: Prisma.$FirepitPayload<ExtArgs>[]
+      createdFirepits: Prisma.$FirepitPayload<ExtArgs>[]
+      ownedFirepits: Prisma.$FirepitPayload<ExtArgs>[]
       accounts: Prisma.$AccountPayload<ExtArgs>[]
       sessions: Prisma.$SessionPayload<ExtArgs>[]
       Authenticator: Prisma.$AuthenticatorPayload<ExtArgs>[]
@@ -1719,8 +1675,6 @@ export namespace Prisma {
       email: string
       emailVerified: Date | null
       password: string | null
-      resetToken: string | null
-      resetTokenExpiresAt: number | null
       image: string | null
       role: $Enums.Role
       createdAt: Date
@@ -2119,7 +2073,8 @@ export namespace Prisma {
    */
   export interface Prisma__UserClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    firepits<T extends User$firepitsArgs<ExtArgs> = {}>(args?: Subset<T, User$firepitsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FirepitPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    createdFirepits<T extends User$createdFirepitsArgs<ExtArgs> = {}>(args?: Subset<T, User$createdFirepitsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FirepitPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    ownedFirepits<T extends User$ownedFirepitsArgs<ExtArgs> = {}>(args?: Subset<T, User$ownedFirepitsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FirepitPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     accounts<T extends User$accountsArgs<ExtArgs> = {}>(args?: Subset<T, User$accountsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     sessions<T extends User$sessionsArgs<ExtArgs> = {}>(args?: Subset<T, User$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     Authenticator<T extends User$AuthenticatorArgs<ExtArgs> = {}>(args?: Subset<T, User$AuthenticatorArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AuthenticatorPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -2157,8 +2112,6 @@ export namespace Prisma {
     readonly email: FieldRef<"User", 'String'>
     readonly emailVerified: FieldRef<"User", 'DateTime'>
     readonly password: FieldRef<"User", 'String'>
-    readonly resetToken: FieldRef<"User", 'String'>
-    readonly resetTokenExpiresAt: FieldRef<"User", 'Int'>
     readonly image: FieldRef<"User", 'String'>
     readonly role: FieldRef<"User", 'Role'>
     readonly createdAt: FieldRef<"User", 'DateTime'>
@@ -2551,9 +2504,33 @@ export namespace Prisma {
   }
 
   /**
-   * User.firepits
+   * User.createdFirepits
    */
-  export type User$firepitsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type User$createdFirepitsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Firepit
+     */
+    select?: FirepitSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Firepit
+     */
+    omit?: FirepitOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FirepitInclude<ExtArgs> | null
+    where?: FirepitWhereInput
+    orderBy?: FirepitOrderByWithRelationInput | FirepitOrderByWithRelationInput[]
+    cursor?: FirepitWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: FirepitScalarFieldEnum | FirepitScalarFieldEnum[]
+  }
+
+  /**
+   * User.ownedFirepits
+   */
+  export type User$ownedFirepitsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
      * Select specific fields to fetch from the Firepit
      */
@@ -7035,12 +7012,14 @@ export namespace Prisma {
     latitude: number | null
     longitude: number | null
     pricePerDay: number | null
+    optimalNumberOfVisitors: number | null
   }
 
   export type FirepitSumAggregateOutputType = {
     latitude: number | null
     longitude: number | null
     pricePerDay: number | null
+    optimalNumberOfVisitors: number | null
   }
 
   export type FirepitMinAggregateOutputType = {
@@ -7051,8 +7030,11 @@ export namespace Prisma {
     longitude: number | null
     city: string | null
     pricePerDay: number | null
+    optimalNumberOfVisitors: number | null
+    createdById: string | null
     ownerId: string | null
     createdAt: Date | null
+    updatedAt: Date | null
   }
 
   export type FirepitMaxAggregateOutputType = {
@@ -7063,8 +7045,11 @@ export namespace Prisma {
     longitude: number | null
     city: string | null
     pricePerDay: number | null
+    optimalNumberOfVisitors: number | null
+    createdById: string | null
     ownerId: string | null
     createdAt: Date | null
+    updatedAt: Date | null
   }
 
   export type FirepitCountAggregateOutputType = {
@@ -7075,8 +7060,11 @@ export namespace Prisma {
     longitude: number
     city: number
     pricePerDay: number
+    optimalNumberOfVisitors: number
+    createdById: number
     ownerId: number
     createdAt: number
+    updatedAt: number
     _all: number
   }
 
@@ -7085,12 +7073,14 @@ export namespace Prisma {
     latitude?: true
     longitude?: true
     pricePerDay?: true
+    optimalNumberOfVisitors?: true
   }
 
   export type FirepitSumAggregateInputType = {
     latitude?: true
     longitude?: true
     pricePerDay?: true
+    optimalNumberOfVisitors?: true
   }
 
   export type FirepitMinAggregateInputType = {
@@ -7101,8 +7091,11 @@ export namespace Prisma {
     longitude?: true
     city?: true
     pricePerDay?: true
+    optimalNumberOfVisitors?: true
+    createdById?: true
     ownerId?: true
     createdAt?: true
+    updatedAt?: true
   }
 
   export type FirepitMaxAggregateInputType = {
@@ -7113,8 +7106,11 @@ export namespace Prisma {
     longitude?: true
     city?: true
     pricePerDay?: true
+    optimalNumberOfVisitors?: true
+    createdById?: true
     ownerId?: true
     createdAt?: true
+    updatedAt?: true
   }
 
   export type FirepitCountAggregateInputType = {
@@ -7125,8 +7121,11 @@ export namespace Prisma {
     longitude?: true
     city?: true
     pricePerDay?: true
+    optimalNumberOfVisitors?: true
+    createdById?: true
     ownerId?: true
     createdAt?: true
+    updatedAt?: true
     _all?: true
   }
 
@@ -7224,8 +7223,11 @@ export namespace Prisma {
     longitude: number
     city: string
     pricePerDay: number | null
-    ownerId: string
+    optimalNumberOfVisitors: number | null
+    createdById: string
+    ownerId: string | null
     createdAt: Date
+    updatedAt: Date
     _count: FirepitCountAggregateOutputType | null
     _avg: FirepitAvgAggregateOutputType | null
     _sum: FirepitSumAggregateOutputType | null
@@ -7255,9 +7257,13 @@ export namespace Prisma {
     longitude?: boolean
     city?: boolean
     pricePerDay?: boolean
+    optimalNumberOfVisitors?: boolean
+    createdById?: boolean
     ownerId?: boolean
     createdAt?: boolean
-    owner?: boolean | UserDefaultArgs<ExtArgs>
+    updatedAt?: boolean
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+    owner?: boolean | Firepit$ownerArgs<ExtArgs>
   }, ExtArgs["result"]["firepit"]>
 
   export type FirepitSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -7268,9 +7274,13 @@ export namespace Prisma {
     longitude?: boolean
     city?: boolean
     pricePerDay?: boolean
+    optimalNumberOfVisitors?: boolean
+    createdById?: boolean
     ownerId?: boolean
     createdAt?: boolean
-    owner?: boolean | UserDefaultArgs<ExtArgs>
+    updatedAt?: boolean
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+    owner?: boolean | Firepit$ownerArgs<ExtArgs>
   }, ExtArgs["result"]["firepit"]>
 
   export type FirepitSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -7281,9 +7291,13 @@ export namespace Prisma {
     longitude?: boolean
     city?: boolean
     pricePerDay?: boolean
+    optimalNumberOfVisitors?: boolean
+    createdById?: boolean
     ownerId?: boolean
     createdAt?: boolean
-    owner?: boolean | UserDefaultArgs<ExtArgs>
+    updatedAt?: boolean
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+    owner?: boolean | Firepit$ownerArgs<ExtArgs>
   }, ExtArgs["result"]["firepit"]>
 
   export type FirepitSelectScalar = {
@@ -7294,25 +7308,32 @@ export namespace Prisma {
     longitude?: boolean
     city?: boolean
     pricePerDay?: boolean
+    optimalNumberOfVisitors?: boolean
+    createdById?: boolean
     ownerId?: boolean
     createdAt?: boolean
+    updatedAt?: boolean
   }
 
-  export type FirepitOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "description" | "latitude" | "longitude" | "city" | "pricePerDay" | "ownerId" | "createdAt", ExtArgs["result"]["firepit"]>
+  export type FirepitOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "description" | "latitude" | "longitude" | "city" | "pricePerDay" | "optimalNumberOfVisitors" | "createdById" | "ownerId" | "createdAt" | "updatedAt", ExtArgs["result"]["firepit"]>
   export type FirepitInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    owner?: boolean | UserDefaultArgs<ExtArgs>
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+    owner?: boolean | Firepit$ownerArgs<ExtArgs>
   }
   export type FirepitIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    owner?: boolean | UserDefaultArgs<ExtArgs>
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+    owner?: boolean | Firepit$ownerArgs<ExtArgs>
   }
   export type FirepitIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    owner?: boolean | UserDefaultArgs<ExtArgs>
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+    owner?: boolean | Firepit$ownerArgs<ExtArgs>
   }
 
   export type $FirepitPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Firepit"
     objects: {
-      owner: Prisma.$UserPayload<ExtArgs>
+      createdBy: Prisma.$UserPayload<ExtArgs>
+      owner: Prisma.$UserPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -7322,8 +7343,11 @@ export namespace Prisma {
       longitude: number
       city: string
       pricePerDay: number | null
-      ownerId: string
+      optimalNumberOfVisitors: number | null
+      createdById: string
+      ownerId: string | null
       createdAt: Date
+      updatedAt: Date
     }, ExtArgs["result"]["firepit"]>
     composites: {}
   }
@@ -7718,7 +7742,8 @@ export namespace Prisma {
    */
   export interface Prisma__FirepitClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    owner<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    createdBy<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    owner<T extends Firepit$ownerArgs<ExtArgs> = {}>(args?: Subset<T, Firepit$ownerArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -7755,8 +7780,11 @@ export namespace Prisma {
     readonly longitude: FieldRef<"Firepit", 'Float'>
     readonly city: FieldRef<"Firepit", 'String'>
     readonly pricePerDay: FieldRef<"Firepit", 'Float'>
+    readonly optimalNumberOfVisitors: FieldRef<"Firepit", 'Int'>
+    readonly createdById: FieldRef<"Firepit", 'String'>
     readonly ownerId: FieldRef<"Firepit", 'String'>
     readonly createdAt: FieldRef<"Firepit", 'DateTime'>
+    readonly updatedAt: FieldRef<"Firepit", 'DateTime'>
   }
     
 
@@ -8153,6 +8181,25 @@ export namespace Prisma {
   }
 
   /**
+   * Firepit.owner
+   */
+  export type Firepit$ownerArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+  }
+
+  /**
    * Firepit without action
    */
   export type FirepitDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -8191,8 +8238,6 @@ export namespace Prisma {
     email: 'email',
     emailVerified: 'emailVerified',
     password: 'password',
-    resetToken: 'resetToken',
-    resetTokenExpiresAt: 'resetTokenExpiresAt',
     image: 'image',
     role: 'role',
     createdAt: 'createdAt',
@@ -8263,8 +8308,11 @@ export namespace Prisma {
     longitude: 'longitude',
     city: 'city',
     pricePerDay: 'pricePerDay',
+    optimalNumberOfVisitors: 'optimalNumberOfVisitors',
+    createdById: 'createdById',
     ownerId: 'ownerId',
-    createdAt: 'createdAt'
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
   };
 
   export type FirepitScalarFieldEnum = (typeof FirepitScalarFieldEnum)[keyof typeof FirepitScalarFieldEnum]
@@ -8328,20 +8376,6 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'Int'
-   */
-  export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
-    
-
-
-  /**
-   * Reference to a field of type 'Int[]'
-   */
-  export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
-    
-
-
-  /**
    * Reference to a field of type 'Role'
    */
   export type EnumRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Role'>
@@ -8352,6 +8386,20 @@ export namespace Prisma {
    * Reference to a field of type 'Role[]'
    */
   export type ListEnumRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Role[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Int'
+   */
+  export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
+    
+
+
+  /**
+   * Reference to a field of type 'Int[]'
+   */
+  export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
     
 
 
@@ -8388,13 +8436,12 @@ export namespace Prisma {
     email?: StringFilter<"User"> | string
     emailVerified?: DateTimeNullableFilter<"User"> | Date | string | null
     password?: StringNullableFilter<"User"> | string | null
-    resetToken?: StringNullableFilter<"User"> | string | null
-    resetTokenExpiresAt?: IntNullableFilter<"User"> | number | null
     image?: StringNullableFilter<"User"> | string | null
     role?: EnumRoleFilter<"User"> | $Enums.Role
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
-    firepits?: FirepitListRelationFilter
+    createdFirepits?: FirepitListRelationFilter
+    ownedFirepits?: FirepitListRelationFilter
     accounts?: AccountListRelationFilter
     sessions?: SessionListRelationFilter
     Authenticator?: AuthenticatorListRelationFilter
@@ -8406,13 +8453,12 @@ export namespace Prisma {
     email?: SortOrder
     emailVerified?: SortOrderInput | SortOrder
     password?: SortOrderInput | SortOrder
-    resetToken?: SortOrderInput | SortOrder
-    resetTokenExpiresAt?: SortOrderInput | SortOrder
     image?: SortOrderInput | SortOrder
     role?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    firepits?: FirepitOrderByRelationAggregateInput
+    createdFirepits?: FirepitOrderByRelationAggregateInput
+    ownedFirepits?: FirepitOrderByRelationAggregateInput
     accounts?: AccountOrderByRelationAggregateInput
     sessions?: SessionOrderByRelationAggregateInput
     Authenticator?: AuthenticatorOrderByRelationAggregateInput
@@ -8427,13 +8473,12 @@ export namespace Prisma {
     name?: StringNullableFilter<"User"> | string | null
     emailVerified?: DateTimeNullableFilter<"User"> | Date | string | null
     password?: StringNullableFilter<"User"> | string | null
-    resetToken?: StringNullableFilter<"User"> | string | null
-    resetTokenExpiresAt?: IntNullableFilter<"User"> | number | null
     image?: StringNullableFilter<"User"> | string | null
     role?: EnumRoleFilter<"User"> | $Enums.Role
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
-    firepits?: FirepitListRelationFilter
+    createdFirepits?: FirepitListRelationFilter
+    ownedFirepits?: FirepitListRelationFilter
     accounts?: AccountListRelationFilter
     sessions?: SessionListRelationFilter
     Authenticator?: AuthenticatorListRelationFilter
@@ -8445,17 +8490,13 @@ export namespace Prisma {
     email?: SortOrder
     emailVerified?: SortOrderInput | SortOrder
     password?: SortOrderInput | SortOrder
-    resetToken?: SortOrderInput | SortOrder
-    resetTokenExpiresAt?: SortOrderInput | SortOrder
     image?: SortOrderInput | SortOrder
     role?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: UserCountOrderByAggregateInput
-    _avg?: UserAvgOrderByAggregateInput
     _max?: UserMaxOrderByAggregateInput
     _min?: UserMinOrderByAggregateInput
-    _sum?: UserSumOrderByAggregateInput
   }
 
   export type UserScalarWhereWithAggregatesInput = {
@@ -8467,8 +8508,6 @@ export namespace Prisma {
     email?: StringWithAggregatesFilter<"User"> | string
     emailVerified?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
     password?: StringNullableWithAggregatesFilter<"User"> | string | null
-    resetToken?: StringNullableWithAggregatesFilter<"User"> | string | null
-    resetTokenExpiresAt?: IntNullableWithAggregatesFilter<"User"> | number | null
     image?: StringNullableWithAggregatesFilter<"User"> | string | null
     role?: EnumRoleWithAggregatesFilter<"User"> | $Enums.Role
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
@@ -8755,9 +8794,13 @@ export namespace Prisma {
     longitude?: FloatFilter<"Firepit"> | number
     city?: StringFilter<"Firepit"> | string
     pricePerDay?: FloatNullableFilter<"Firepit"> | number | null
-    ownerId?: StringFilter<"Firepit"> | string
+    optimalNumberOfVisitors?: IntNullableFilter<"Firepit"> | number | null
+    createdById?: StringFilter<"Firepit"> | string
+    ownerId?: StringNullableFilter<"Firepit"> | string | null
     createdAt?: DateTimeFilter<"Firepit"> | Date | string
-    owner?: XOR<UserScalarRelationFilter, UserWhereInput>
+    updatedAt?: DateTimeFilter<"Firepit"> | Date | string
+    createdBy?: XOR<UserScalarRelationFilter, UserWhereInput>
+    owner?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
   }
 
   export type FirepitOrderByWithRelationInput = {
@@ -8768,8 +8811,12 @@ export namespace Prisma {
     longitude?: SortOrder
     city?: SortOrder
     pricePerDay?: SortOrderInput | SortOrder
-    ownerId?: SortOrder
+    optimalNumberOfVisitors?: SortOrderInput | SortOrder
+    createdById?: SortOrder
+    ownerId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
+    updatedAt?: SortOrder
+    createdBy?: UserOrderByWithRelationInput
     owner?: UserOrderByWithRelationInput
   }
 
@@ -8784,9 +8831,13 @@ export namespace Prisma {
     longitude?: FloatFilter<"Firepit"> | number
     city?: StringFilter<"Firepit"> | string
     pricePerDay?: FloatNullableFilter<"Firepit"> | number | null
-    ownerId?: StringFilter<"Firepit"> | string
+    optimalNumberOfVisitors?: IntNullableFilter<"Firepit"> | number | null
+    createdById?: StringFilter<"Firepit"> | string
+    ownerId?: StringNullableFilter<"Firepit"> | string | null
     createdAt?: DateTimeFilter<"Firepit"> | Date | string
-    owner?: XOR<UserScalarRelationFilter, UserWhereInput>
+    updatedAt?: DateTimeFilter<"Firepit"> | Date | string
+    createdBy?: XOR<UserScalarRelationFilter, UserWhereInput>
+    owner?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
   }, "id">
 
   export type FirepitOrderByWithAggregationInput = {
@@ -8797,8 +8848,11 @@ export namespace Prisma {
     longitude?: SortOrder
     city?: SortOrder
     pricePerDay?: SortOrderInput | SortOrder
-    ownerId?: SortOrder
+    optimalNumberOfVisitors?: SortOrderInput | SortOrder
+    createdById?: SortOrder
+    ownerId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
+    updatedAt?: SortOrder
     _count?: FirepitCountOrderByAggregateInput
     _avg?: FirepitAvgOrderByAggregateInput
     _max?: FirepitMaxOrderByAggregateInput
@@ -8817,8 +8871,11 @@ export namespace Prisma {
     longitude?: FloatWithAggregatesFilter<"Firepit"> | number
     city?: StringWithAggregatesFilter<"Firepit"> | string
     pricePerDay?: FloatNullableWithAggregatesFilter<"Firepit"> | number | null
-    ownerId?: StringWithAggregatesFilter<"Firepit"> | string
+    optimalNumberOfVisitors?: IntNullableWithAggregatesFilter<"Firepit"> | number | null
+    createdById?: StringWithAggregatesFilter<"Firepit"> | string
+    ownerId?: StringNullableWithAggregatesFilter<"Firepit"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Firepit"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Firepit"> | Date | string
   }
 
   export type UserCreateInput = {
@@ -8827,13 +8884,12 @@ export namespace Prisma {
     email: string
     emailVerified?: Date | string | null
     password?: string | null
-    resetToken?: string | null
-    resetTokenExpiresAt?: number | null
     image?: string | null
     role?: $Enums.Role
     createdAt?: Date | string
     updatedAt?: Date | string
-    firepits?: FirepitCreateNestedManyWithoutOwnerInput
+    createdFirepits?: FirepitCreateNestedManyWithoutCreatedByInput
+    ownedFirepits?: FirepitCreateNestedManyWithoutOwnerInput
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     Authenticator?: AuthenticatorCreateNestedManyWithoutUserInput
@@ -8845,13 +8901,12 @@ export namespace Prisma {
     email: string
     emailVerified?: Date | string | null
     password?: string | null
-    resetToken?: string | null
-    resetTokenExpiresAt?: number | null
     image?: string | null
     role?: $Enums.Role
     createdAt?: Date | string
     updatedAt?: Date | string
-    firepits?: FirepitUncheckedCreateNestedManyWithoutOwnerInput
+    createdFirepits?: FirepitUncheckedCreateNestedManyWithoutCreatedByInput
+    ownedFirepits?: FirepitUncheckedCreateNestedManyWithoutOwnerInput
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     Authenticator?: AuthenticatorUncheckedCreateNestedManyWithoutUserInput
@@ -8863,13 +8918,12 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
-    resetToken?: NullableStringFieldUpdateOperationsInput | string | null
-    resetTokenExpiresAt?: NullableIntFieldUpdateOperationsInput | number | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    firepits?: FirepitUpdateManyWithoutOwnerNestedInput
+    createdFirepits?: FirepitUpdateManyWithoutCreatedByNestedInput
+    ownedFirepits?: FirepitUpdateManyWithoutOwnerNestedInput
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     Authenticator?: AuthenticatorUpdateManyWithoutUserNestedInput
@@ -8881,13 +8935,12 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
-    resetToken?: NullableStringFieldUpdateOperationsInput | string | null
-    resetTokenExpiresAt?: NullableIntFieldUpdateOperationsInput | number | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    firepits?: FirepitUncheckedUpdateManyWithoutOwnerNestedInput
+    createdFirepits?: FirepitUncheckedUpdateManyWithoutCreatedByNestedInput
+    ownedFirepits?: FirepitUncheckedUpdateManyWithoutOwnerNestedInput
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     Authenticator?: AuthenticatorUncheckedUpdateManyWithoutUserNestedInput
@@ -8899,8 +8952,6 @@ export namespace Prisma {
     email: string
     emailVerified?: Date | string | null
     password?: string | null
-    resetToken?: string | null
-    resetTokenExpiresAt?: number | null
     image?: string | null
     role?: $Enums.Role
     createdAt?: Date | string
@@ -8913,8 +8964,6 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
-    resetToken?: NullableStringFieldUpdateOperationsInput | string | null
-    resetTokenExpiresAt?: NullableIntFieldUpdateOperationsInput | number | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8927,8 +8976,6 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
-    resetToken?: NullableStringFieldUpdateOperationsInput | string | null
-    resetTokenExpiresAt?: NullableIntFieldUpdateOperationsInput | number | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -9227,8 +9274,11 @@ export namespace Prisma {
     longitude: number
     city: string
     pricePerDay?: number | null
+    optimalNumberOfVisitors?: number | null
     createdAt?: Date | string
-    owner: UserCreateNestedOneWithoutFirepitsInput
+    updatedAt?: Date | string
+    createdBy: UserCreateNestedOneWithoutCreatedFirepitsInput
+    owner?: UserCreateNestedOneWithoutOwnedFirepitsInput
   }
 
   export type FirepitUncheckedCreateInput = {
@@ -9239,8 +9289,11 @@ export namespace Prisma {
     longitude: number
     city: string
     pricePerDay?: number | null
-    ownerId: string
+    optimalNumberOfVisitors?: number | null
+    createdById: string
+    ownerId?: string | null
     createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type FirepitUpdateInput = {
@@ -9251,8 +9304,11 @@ export namespace Prisma {
     longitude?: FloatFieldUpdateOperationsInput | number
     city?: StringFieldUpdateOperationsInput | string
     pricePerDay?: NullableFloatFieldUpdateOperationsInput | number | null
+    optimalNumberOfVisitors?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    owner?: UserUpdateOneRequiredWithoutFirepitsNestedInput
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: UserUpdateOneRequiredWithoutCreatedFirepitsNestedInput
+    owner?: UserUpdateOneWithoutOwnedFirepitsNestedInput
   }
 
   export type FirepitUncheckedUpdateInput = {
@@ -9263,8 +9319,11 @@ export namespace Prisma {
     longitude?: FloatFieldUpdateOperationsInput | number
     city?: StringFieldUpdateOperationsInput | string
     pricePerDay?: NullableFloatFieldUpdateOperationsInput | number | null
-    ownerId?: StringFieldUpdateOperationsInput | string
+    optimalNumberOfVisitors?: NullableIntFieldUpdateOperationsInput | number | null
+    createdById?: StringFieldUpdateOperationsInput | string
+    ownerId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type FirepitCreateManyInput = {
@@ -9275,8 +9334,11 @@ export namespace Prisma {
     longitude: number
     city: string
     pricePerDay?: number | null
-    ownerId: string
+    optimalNumberOfVisitors?: number | null
+    createdById: string
+    ownerId?: string | null
     createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type FirepitUpdateManyMutationInput = {
@@ -9287,7 +9349,9 @@ export namespace Prisma {
     longitude?: FloatFieldUpdateOperationsInput | number
     city?: StringFieldUpdateOperationsInput | string
     pricePerDay?: NullableFloatFieldUpdateOperationsInput | number | null
+    optimalNumberOfVisitors?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type FirepitUncheckedUpdateManyInput = {
@@ -9298,8 +9362,11 @@ export namespace Prisma {
     longitude?: FloatFieldUpdateOperationsInput | number
     city?: StringFieldUpdateOperationsInput | string
     pricePerDay?: NullableFloatFieldUpdateOperationsInput | number | null
-    ownerId?: StringFieldUpdateOperationsInput | string
+    optimalNumberOfVisitors?: NullableIntFieldUpdateOperationsInput | number | null
+    createdById?: StringFieldUpdateOperationsInput | string
+    ownerId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type StringFilter<$PrismaModel = never> = {
@@ -9341,17 +9408,6 @@ export namespace Prisma {
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
-  }
-
-  export type IntNullableFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
   export type EnumRoleFilter<$PrismaModel = never> = {
@@ -9423,16 +9479,10 @@ export namespace Prisma {
     email?: SortOrder
     emailVerified?: SortOrder
     password?: SortOrder
-    resetToken?: SortOrder
-    resetTokenExpiresAt?: SortOrder
     image?: SortOrder
     role?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-  }
-
-  export type UserAvgOrderByAggregateInput = {
-    resetTokenExpiresAt?: SortOrder
   }
 
   export type UserMaxOrderByAggregateInput = {
@@ -9441,8 +9491,6 @@ export namespace Prisma {
     email?: SortOrder
     emailVerified?: SortOrder
     password?: SortOrder
-    resetToken?: SortOrder
-    resetTokenExpiresAt?: SortOrder
     image?: SortOrder
     role?: SortOrder
     createdAt?: SortOrder
@@ -9455,16 +9503,10 @@ export namespace Prisma {
     email?: SortOrder
     emailVerified?: SortOrder
     password?: SortOrder
-    resetToken?: SortOrder
-    resetTokenExpiresAt?: SortOrder
     image?: SortOrder
     role?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-  }
-
-  export type UserSumOrderByAggregateInput = {
-    resetTokenExpiresAt?: SortOrder
   }
 
   export type StringWithAggregatesFilter<$PrismaModel = never> = {
@@ -9517,22 +9559,6 @@ export namespace Prisma {
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
-  export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _avg?: NestedFloatNullableFilter<$PrismaModel>
-    _sum?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedIntNullableFilter<$PrismaModel>
-    _max?: NestedIntNullableFilter<$PrismaModel>
-  }
-
   export type EnumRoleWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.Role | EnumRoleFieldRefInput<$PrismaModel>
     in?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
@@ -9555,6 +9581,17 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedDateTimeFilter<$PrismaModel>
     _max?: NestedDateTimeFilter<$PrismaModel>
+  }
+
+  export type IntNullableFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
   export type UserScalarRelationFilter = {
@@ -9621,6 +9658,22 @@ export namespace Prisma {
 
   export type AccountSumOrderByAggregateInput = {
     expires_at?: SortOrder
+  }
+
+  export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedIntNullableFilter<$PrismaModel>
+    _max?: NestedIntNullableFilter<$PrismaModel>
   }
 
   export type SessionCountOrderByAggregateInput = {
@@ -9778,6 +9831,11 @@ export namespace Prisma {
     not?: NestedFloatNullableFilter<$PrismaModel> | number | null
   }
 
+  export type UserNullableScalarRelationFilter = {
+    is?: UserWhereInput | null
+    isNot?: UserWhereInput | null
+  }
+
   export type FirepitCountOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
@@ -9786,14 +9844,18 @@ export namespace Prisma {
     longitude?: SortOrder
     city?: SortOrder
     pricePerDay?: SortOrder
+    optimalNumberOfVisitors?: SortOrder
+    createdById?: SortOrder
     ownerId?: SortOrder
     createdAt?: SortOrder
+    updatedAt?: SortOrder
   }
 
   export type FirepitAvgOrderByAggregateInput = {
     latitude?: SortOrder
     longitude?: SortOrder
     pricePerDay?: SortOrder
+    optimalNumberOfVisitors?: SortOrder
   }
 
   export type FirepitMaxOrderByAggregateInput = {
@@ -9804,8 +9866,11 @@ export namespace Prisma {
     longitude?: SortOrder
     city?: SortOrder
     pricePerDay?: SortOrder
+    optimalNumberOfVisitors?: SortOrder
+    createdById?: SortOrder
     ownerId?: SortOrder
     createdAt?: SortOrder
+    updatedAt?: SortOrder
   }
 
   export type FirepitMinOrderByAggregateInput = {
@@ -9816,14 +9881,18 @@ export namespace Prisma {
     longitude?: SortOrder
     city?: SortOrder
     pricePerDay?: SortOrder
+    optimalNumberOfVisitors?: SortOrder
+    createdById?: SortOrder
     ownerId?: SortOrder
     createdAt?: SortOrder
+    updatedAt?: SortOrder
   }
 
   export type FirepitSumOrderByAggregateInput = {
     latitude?: SortOrder
     longitude?: SortOrder
     pricePerDay?: SortOrder
+    optimalNumberOfVisitors?: SortOrder
   }
 
   export type FloatWithAggregatesFilter<$PrismaModel = never> = {
@@ -9858,6 +9927,13 @@ export namespace Prisma {
     _max?: NestedFloatNullableFilter<$PrismaModel>
   }
 
+  export type FirepitCreateNestedManyWithoutCreatedByInput = {
+    create?: XOR<FirepitCreateWithoutCreatedByInput, FirepitUncheckedCreateWithoutCreatedByInput> | FirepitCreateWithoutCreatedByInput[] | FirepitUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: FirepitCreateOrConnectWithoutCreatedByInput | FirepitCreateOrConnectWithoutCreatedByInput[]
+    createMany?: FirepitCreateManyCreatedByInputEnvelope
+    connect?: FirepitWhereUniqueInput | FirepitWhereUniqueInput[]
+  }
+
   export type FirepitCreateNestedManyWithoutOwnerInput = {
     create?: XOR<FirepitCreateWithoutOwnerInput, FirepitUncheckedCreateWithoutOwnerInput> | FirepitCreateWithoutOwnerInput[] | FirepitUncheckedCreateWithoutOwnerInput[]
     connectOrCreate?: FirepitCreateOrConnectWithoutOwnerInput | FirepitCreateOrConnectWithoutOwnerInput[]
@@ -9884,6 +9960,13 @@ export namespace Prisma {
     connectOrCreate?: AuthenticatorCreateOrConnectWithoutUserInput | AuthenticatorCreateOrConnectWithoutUserInput[]
     createMany?: AuthenticatorCreateManyUserInputEnvelope
     connect?: AuthenticatorWhereUniqueInput | AuthenticatorWhereUniqueInput[]
+  }
+
+  export type FirepitUncheckedCreateNestedManyWithoutCreatedByInput = {
+    create?: XOR<FirepitCreateWithoutCreatedByInput, FirepitUncheckedCreateWithoutCreatedByInput> | FirepitCreateWithoutCreatedByInput[] | FirepitUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: FirepitCreateOrConnectWithoutCreatedByInput | FirepitCreateOrConnectWithoutCreatedByInput[]
+    createMany?: FirepitCreateManyCreatedByInputEnvelope
+    connect?: FirepitWhereUniqueInput | FirepitWhereUniqueInput[]
   }
 
   export type FirepitUncheckedCreateNestedManyWithoutOwnerInput = {
@@ -9926,20 +10009,26 @@ export namespace Prisma {
     set?: Date | string | null
   }
 
-  export type NullableIntFieldUpdateOperationsInput = {
-    set?: number | null
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
-  }
-
   export type EnumRoleFieldUpdateOperationsInput = {
     set?: $Enums.Role
   }
 
   export type DateTimeFieldUpdateOperationsInput = {
     set?: Date | string
+  }
+
+  export type FirepitUpdateManyWithoutCreatedByNestedInput = {
+    create?: XOR<FirepitCreateWithoutCreatedByInput, FirepitUncheckedCreateWithoutCreatedByInput> | FirepitCreateWithoutCreatedByInput[] | FirepitUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: FirepitCreateOrConnectWithoutCreatedByInput | FirepitCreateOrConnectWithoutCreatedByInput[]
+    upsert?: FirepitUpsertWithWhereUniqueWithoutCreatedByInput | FirepitUpsertWithWhereUniqueWithoutCreatedByInput[]
+    createMany?: FirepitCreateManyCreatedByInputEnvelope
+    set?: FirepitWhereUniqueInput | FirepitWhereUniqueInput[]
+    disconnect?: FirepitWhereUniqueInput | FirepitWhereUniqueInput[]
+    delete?: FirepitWhereUniqueInput | FirepitWhereUniqueInput[]
+    connect?: FirepitWhereUniqueInput | FirepitWhereUniqueInput[]
+    update?: FirepitUpdateWithWhereUniqueWithoutCreatedByInput | FirepitUpdateWithWhereUniqueWithoutCreatedByInput[]
+    updateMany?: FirepitUpdateManyWithWhereWithoutCreatedByInput | FirepitUpdateManyWithWhereWithoutCreatedByInput[]
+    deleteMany?: FirepitScalarWhereInput | FirepitScalarWhereInput[]
   }
 
   export type FirepitUpdateManyWithoutOwnerNestedInput = {
@@ -9996,6 +10085,20 @@ export namespace Prisma {
     update?: AuthenticatorUpdateWithWhereUniqueWithoutUserInput | AuthenticatorUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: AuthenticatorUpdateManyWithWhereWithoutUserInput | AuthenticatorUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: AuthenticatorScalarWhereInput | AuthenticatorScalarWhereInput[]
+  }
+
+  export type FirepitUncheckedUpdateManyWithoutCreatedByNestedInput = {
+    create?: XOR<FirepitCreateWithoutCreatedByInput, FirepitUncheckedCreateWithoutCreatedByInput> | FirepitCreateWithoutCreatedByInput[] | FirepitUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: FirepitCreateOrConnectWithoutCreatedByInput | FirepitCreateOrConnectWithoutCreatedByInput[]
+    upsert?: FirepitUpsertWithWhereUniqueWithoutCreatedByInput | FirepitUpsertWithWhereUniqueWithoutCreatedByInput[]
+    createMany?: FirepitCreateManyCreatedByInputEnvelope
+    set?: FirepitWhereUniqueInput | FirepitWhereUniqueInput[]
+    disconnect?: FirepitWhereUniqueInput | FirepitWhereUniqueInput[]
+    delete?: FirepitWhereUniqueInput | FirepitWhereUniqueInput[]
+    connect?: FirepitWhereUniqueInput | FirepitWhereUniqueInput[]
+    update?: FirepitUpdateWithWhereUniqueWithoutCreatedByInput | FirepitUpdateWithWhereUniqueWithoutCreatedByInput[]
+    updateMany?: FirepitUpdateManyWithWhereWithoutCreatedByInput | FirepitUpdateManyWithWhereWithoutCreatedByInput[]
+    deleteMany?: FirepitScalarWhereInput | FirepitScalarWhereInput[]
   }
 
   export type FirepitUncheckedUpdateManyWithoutOwnerNestedInput = {
@@ -10060,6 +10163,14 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput
   }
 
+  export type NullableIntFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
   export type UserUpdateOneRequiredWithoutAccountsNestedInput = {
     create?: XOR<UserCreateWithoutAccountsInput, UserUncheckedCreateWithoutAccountsInput>
     connectOrCreate?: UserCreateOrConnectWithoutAccountsInput
@@ -10108,9 +10219,15 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutAuthenticatorInput, UserUpdateWithoutAuthenticatorInput>, UserUncheckedUpdateWithoutAuthenticatorInput>
   }
 
-  export type UserCreateNestedOneWithoutFirepitsInput = {
-    create?: XOR<UserCreateWithoutFirepitsInput, UserUncheckedCreateWithoutFirepitsInput>
-    connectOrCreate?: UserCreateOrConnectWithoutFirepitsInput
+  export type UserCreateNestedOneWithoutCreatedFirepitsInput = {
+    create?: XOR<UserCreateWithoutCreatedFirepitsInput, UserUncheckedCreateWithoutCreatedFirepitsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutCreatedFirepitsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutOwnedFirepitsInput = {
+    create?: XOR<UserCreateWithoutOwnedFirepitsInput, UserUncheckedCreateWithoutOwnedFirepitsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutOwnedFirepitsInput
     connect?: UserWhereUniqueInput
   }
 
@@ -10130,12 +10247,22 @@ export namespace Prisma {
     divide?: number
   }
 
-  export type UserUpdateOneRequiredWithoutFirepitsNestedInput = {
-    create?: XOR<UserCreateWithoutFirepitsInput, UserUncheckedCreateWithoutFirepitsInput>
-    connectOrCreate?: UserCreateOrConnectWithoutFirepitsInput
-    upsert?: UserUpsertWithoutFirepitsInput
+  export type UserUpdateOneRequiredWithoutCreatedFirepitsNestedInput = {
+    create?: XOR<UserCreateWithoutCreatedFirepitsInput, UserUncheckedCreateWithoutCreatedFirepitsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutCreatedFirepitsInput
+    upsert?: UserUpsertWithoutCreatedFirepitsInput
     connect?: UserWhereUniqueInput
-    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutFirepitsInput, UserUpdateWithoutFirepitsInput>, UserUncheckedUpdateWithoutFirepitsInput>
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutCreatedFirepitsInput, UserUpdateWithoutCreatedFirepitsInput>, UserUncheckedUpdateWithoutCreatedFirepitsInput>
+  }
+
+  export type UserUpdateOneWithoutOwnedFirepitsNestedInput = {
+    create?: XOR<UserCreateWithoutOwnedFirepitsInput, UserUncheckedCreateWithoutOwnedFirepitsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutOwnedFirepitsInput
+    upsert?: UserUpsertWithoutOwnedFirepitsInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutOwnedFirepitsInput, UserUpdateWithoutOwnedFirepitsInput>, UserUncheckedUpdateWithoutOwnedFirepitsInput>
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -10175,17 +10302,6 @@ export namespace Prisma {
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
-  }
-
-  export type NestedIntNullableFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
   export type NestedEnumRoleFilter<$PrismaModel = never> = {
@@ -10251,6 +10367,17 @@ export namespace Prisma {
     _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
+  export type NestedIntNullableFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  }
+
   export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
@@ -10263,6 +10390,30 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedDateTimeNullableFilter<$PrismaModel>
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
+  export type NestedEnumRoleWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.Role | EnumRoleFieldRefInput<$PrismaModel>
+    in?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
+    not?: NestedEnumRoleWithAggregatesFilter<$PrismaModel> | $Enums.Role
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumRoleFilter<$PrismaModel>
+    _max?: NestedEnumRoleFilter<$PrismaModel>
+  }
+
+  export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedDateTimeFilter<$PrismaModel>
+    _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
   export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -10290,30 +10441,6 @@ export namespace Prisma {
     gt?: number | FloatFieldRefInput<$PrismaModel>
     gte?: number | FloatFieldRefInput<$PrismaModel>
     not?: NestedFloatNullableFilter<$PrismaModel> | number | null
-  }
-
-  export type NestedEnumRoleWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.Role | EnumRoleFieldRefInput<$PrismaModel>
-    in?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
-    notIn?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
-    not?: NestedEnumRoleWithAggregatesFilter<$PrismaModel> | $Enums.Role
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumRoleFilter<$PrismaModel>
-    _max?: NestedEnumRoleFilter<$PrismaModel>
-  }
-
-  export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedDateTimeFilter<$PrismaModel>
-    _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
   export type NestedBoolFilter<$PrismaModel = never> = {
@@ -10388,6 +10515,44 @@ export namespace Prisma {
     _max?: NestedFloatNullableFilter<$PrismaModel>
   }
 
+  export type FirepitCreateWithoutCreatedByInput = {
+    id?: string
+    name: string
+    description?: string | null
+    latitude: number
+    longitude: number
+    city: string
+    pricePerDay?: number | null
+    optimalNumberOfVisitors?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    owner?: UserCreateNestedOneWithoutOwnedFirepitsInput
+  }
+
+  export type FirepitUncheckedCreateWithoutCreatedByInput = {
+    id?: string
+    name: string
+    description?: string | null
+    latitude: number
+    longitude: number
+    city: string
+    pricePerDay?: number | null
+    optimalNumberOfVisitors?: number | null
+    ownerId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type FirepitCreateOrConnectWithoutCreatedByInput = {
+    where: FirepitWhereUniqueInput
+    create: XOR<FirepitCreateWithoutCreatedByInput, FirepitUncheckedCreateWithoutCreatedByInput>
+  }
+
+  export type FirepitCreateManyCreatedByInputEnvelope = {
+    data: FirepitCreateManyCreatedByInput | FirepitCreateManyCreatedByInput[]
+    skipDuplicates?: boolean
+  }
+
   export type FirepitCreateWithoutOwnerInput = {
     id?: string
     name: string
@@ -10396,7 +10561,10 @@ export namespace Prisma {
     longitude: number
     city: string
     pricePerDay?: number | null
+    optimalNumberOfVisitors?: number | null
     createdAt?: Date | string
+    updatedAt?: Date | string
+    createdBy: UserCreateNestedOneWithoutCreatedFirepitsInput
   }
 
   export type FirepitUncheckedCreateWithoutOwnerInput = {
@@ -10407,7 +10575,10 @@ export namespace Prisma {
     longitude: number
     city: string
     pricePerDay?: number | null
+    optimalNumberOfVisitors?: number | null
+    createdById: string
     createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type FirepitCreateOrConnectWithoutOwnerInput = {
@@ -10514,6 +10685,40 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type FirepitUpsertWithWhereUniqueWithoutCreatedByInput = {
+    where: FirepitWhereUniqueInput
+    update: XOR<FirepitUpdateWithoutCreatedByInput, FirepitUncheckedUpdateWithoutCreatedByInput>
+    create: XOR<FirepitCreateWithoutCreatedByInput, FirepitUncheckedCreateWithoutCreatedByInput>
+  }
+
+  export type FirepitUpdateWithWhereUniqueWithoutCreatedByInput = {
+    where: FirepitWhereUniqueInput
+    data: XOR<FirepitUpdateWithoutCreatedByInput, FirepitUncheckedUpdateWithoutCreatedByInput>
+  }
+
+  export type FirepitUpdateManyWithWhereWithoutCreatedByInput = {
+    where: FirepitScalarWhereInput
+    data: XOR<FirepitUpdateManyMutationInput, FirepitUncheckedUpdateManyWithoutCreatedByInput>
+  }
+
+  export type FirepitScalarWhereInput = {
+    AND?: FirepitScalarWhereInput | FirepitScalarWhereInput[]
+    OR?: FirepitScalarWhereInput[]
+    NOT?: FirepitScalarWhereInput | FirepitScalarWhereInput[]
+    id?: StringFilter<"Firepit"> | string
+    name?: StringFilter<"Firepit"> | string
+    description?: StringNullableFilter<"Firepit"> | string | null
+    latitude?: FloatFilter<"Firepit"> | number
+    longitude?: FloatFilter<"Firepit"> | number
+    city?: StringFilter<"Firepit"> | string
+    pricePerDay?: FloatNullableFilter<"Firepit"> | number | null
+    optimalNumberOfVisitors?: IntNullableFilter<"Firepit"> | number | null
+    createdById?: StringFilter<"Firepit"> | string
+    ownerId?: StringNullableFilter<"Firepit"> | string | null
+    createdAt?: DateTimeFilter<"Firepit"> | Date | string
+    updatedAt?: DateTimeFilter<"Firepit"> | Date | string
+  }
+
   export type FirepitUpsertWithWhereUniqueWithoutOwnerInput = {
     where: FirepitWhereUniqueInput
     update: XOR<FirepitUpdateWithoutOwnerInput, FirepitUncheckedUpdateWithoutOwnerInput>
@@ -10528,21 +10733,6 @@ export namespace Prisma {
   export type FirepitUpdateManyWithWhereWithoutOwnerInput = {
     where: FirepitScalarWhereInput
     data: XOR<FirepitUpdateManyMutationInput, FirepitUncheckedUpdateManyWithoutOwnerInput>
-  }
-
-  export type FirepitScalarWhereInput = {
-    AND?: FirepitScalarWhereInput | FirepitScalarWhereInput[]
-    OR?: FirepitScalarWhereInput[]
-    NOT?: FirepitScalarWhereInput | FirepitScalarWhereInput[]
-    id?: StringFilter<"Firepit"> | string
-    name?: StringFilter<"Firepit"> | string
-    description?: StringNullableFilter<"Firepit"> | string | null
-    latitude?: FloatFilter<"Firepit"> | number
-    longitude?: FloatFilter<"Firepit"> | number
-    city?: StringFilter<"Firepit"> | string
-    pricePerDay?: FloatNullableFilter<"Firepit"> | number | null
-    ownerId?: StringFilter<"Firepit"> | string
-    createdAt?: DateTimeFilter<"Firepit"> | Date | string
   }
 
   export type AccountUpsertWithWhereUniqueWithoutUserInput = {
@@ -10643,13 +10833,12 @@ export namespace Prisma {
     email: string
     emailVerified?: Date | string | null
     password?: string | null
-    resetToken?: string | null
-    resetTokenExpiresAt?: number | null
     image?: string | null
     role?: $Enums.Role
     createdAt?: Date | string
     updatedAt?: Date | string
-    firepits?: FirepitCreateNestedManyWithoutOwnerInput
+    createdFirepits?: FirepitCreateNestedManyWithoutCreatedByInput
+    ownedFirepits?: FirepitCreateNestedManyWithoutOwnerInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     Authenticator?: AuthenticatorCreateNestedManyWithoutUserInput
   }
@@ -10660,13 +10849,12 @@ export namespace Prisma {
     email: string
     emailVerified?: Date | string | null
     password?: string | null
-    resetToken?: string | null
-    resetTokenExpiresAt?: number | null
     image?: string | null
     role?: $Enums.Role
     createdAt?: Date | string
     updatedAt?: Date | string
-    firepits?: FirepitUncheckedCreateNestedManyWithoutOwnerInput
+    createdFirepits?: FirepitUncheckedCreateNestedManyWithoutCreatedByInput
+    ownedFirepits?: FirepitUncheckedCreateNestedManyWithoutOwnerInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     Authenticator?: AuthenticatorUncheckedCreateNestedManyWithoutUserInput
   }
@@ -10693,13 +10881,12 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
-    resetToken?: NullableStringFieldUpdateOperationsInput | string | null
-    resetTokenExpiresAt?: NullableIntFieldUpdateOperationsInput | number | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    firepits?: FirepitUpdateManyWithoutOwnerNestedInput
+    createdFirepits?: FirepitUpdateManyWithoutCreatedByNestedInput
+    ownedFirepits?: FirepitUpdateManyWithoutOwnerNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     Authenticator?: AuthenticatorUpdateManyWithoutUserNestedInput
   }
@@ -10710,13 +10897,12 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
-    resetToken?: NullableStringFieldUpdateOperationsInput | string | null
-    resetTokenExpiresAt?: NullableIntFieldUpdateOperationsInput | number | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    firepits?: FirepitUncheckedUpdateManyWithoutOwnerNestedInput
+    createdFirepits?: FirepitUncheckedUpdateManyWithoutCreatedByNestedInput
+    ownedFirepits?: FirepitUncheckedUpdateManyWithoutOwnerNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     Authenticator?: AuthenticatorUncheckedUpdateManyWithoutUserNestedInput
   }
@@ -10727,13 +10913,12 @@ export namespace Prisma {
     email: string
     emailVerified?: Date | string | null
     password?: string | null
-    resetToken?: string | null
-    resetTokenExpiresAt?: number | null
     image?: string | null
     role?: $Enums.Role
     createdAt?: Date | string
     updatedAt?: Date | string
-    firepits?: FirepitCreateNestedManyWithoutOwnerInput
+    createdFirepits?: FirepitCreateNestedManyWithoutCreatedByInput
+    ownedFirepits?: FirepitCreateNestedManyWithoutOwnerInput
     accounts?: AccountCreateNestedManyWithoutUserInput
     Authenticator?: AuthenticatorCreateNestedManyWithoutUserInput
   }
@@ -10744,13 +10929,12 @@ export namespace Prisma {
     email: string
     emailVerified?: Date | string | null
     password?: string | null
-    resetToken?: string | null
-    resetTokenExpiresAt?: number | null
     image?: string | null
     role?: $Enums.Role
     createdAt?: Date | string
     updatedAt?: Date | string
-    firepits?: FirepitUncheckedCreateNestedManyWithoutOwnerInput
+    createdFirepits?: FirepitUncheckedCreateNestedManyWithoutCreatedByInput
+    ownedFirepits?: FirepitUncheckedCreateNestedManyWithoutOwnerInput
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     Authenticator?: AuthenticatorUncheckedCreateNestedManyWithoutUserInput
   }
@@ -10777,13 +10961,12 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
-    resetToken?: NullableStringFieldUpdateOperationsInput | string | null
-    resetTokenExpiresAt?: NullableIntFieldUpdateOperationsInput | number | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    firepits?: FirepitUpdateManyWithoutOwnerNestedInput
+    createdFirepits?: FirepitUpdateManyWithoutCreatedByNestedInput
+    ownedFirepits?: FirepitUpdateManyWithoutOwnerNestedInput
     accounts?: AccountUpdateManyWithoutUserNestedInput
     Authenticator?: AuthenticatorUpdateManyWithoutUserNestedInput
   }
@@ -10794,13 +10977,12 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
-    resetToken?: NullableStringFieldUpdateOperationsInput | string | null
-    resetTokenExpiresAt?: NullableIntFieldUpdateOperationsInput | number | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    firepits?: FirepitUncheckedUpdateManyWithoutOwnerNestedInput
+    createdFirepits?: FirepitUncheckedUpdateManyWithoutCreatedByNestedInput
+    ownedFirepits?: FirepitUncheckedUpdateManyWithoutOwnerNestedInput
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     Authenticator?: AuthenticatorUncheckedUpdateManyWithoutUserNestedInput
   }
@@ -10811,13 +10993,12 @@ export namespace Prisma {
     email: string
     emailVerified?: Date | string | null
     password?: string | null
-    resetToken?: string | null
-    resetTokenExpiresAt?: number | null
     image?: string | null
     role?: $Enums.Role
     createdAt?: Date | string
     updatedAt?: Date | string
-    firepits?: FirepitCreateNestedManyWithoutOwnerInput
+    createdFirepits?: FirepitCreateNestedManyWithoutCreatedByInput
+    ownedFirepits?: FirepitCreateNestedManyWithoutOwnerInput
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
   }
@@ -10828,13 +11009,12 @@ export namespace Prisma {
     email: string
     emailVerified?: Date | string | null
     password?: string | null
-    resetToken?: string | null
-    resetTokenExpiresAt?: number | null
     image?: string | null
     role?: $Enums.Role
     createdAt?: Date | string
     updatedAt?: Date | string
-    firepits?: FirepitUncheckedCreateNestedManyWithoutOwnerInput
+    createdFirepits?: FirepitUncheckedCreateNestedManyWithoutCreatedByInput
+    ownedFirepits?: FirepitUncheckedCreateNestedManyWithoutOwnerInput
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
   }
@@ -10861,13 +11041,12 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
-    resetToken?: NullableStringFieldUpdateOperationsInput | string | null
-    resetTokenExpiresAt?: NullableIntFieldUpdateOperationsInput | number | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    firepits?: FirepitUpdateManyWithoutOwnerNestedInput
+    createdFirepits?: FirepitUpdateManyWithoutCreatedByNestedInput
+    ownedFirepits?: FirepitUpdateManyWithoutOwnerNestedInput
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
   }
@@ -10878,99 +11057,188 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
-    resetToken?: NullableStringFieldUpdateOperationsInput | string | null
-    resetTokenExpiresAt?: NullableIntFieldUpdateOperationsInput | number | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    firepits?: FirepitUncheckedUpdateManyWithoutOwnerNestedInput
+    createdFirepits?: FirepitUncheckedUpdateManyWithoutCreatedByNestedInput
+    ownedFirepits?: FirepitUncheckedUpdateManyWithoutOwnerNestedInput
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
   }
 
-  export type UserCreateWithoutFirepitsInput = {
+  export type UserCreateWithoutCreatedFirepitsInput = {
     id?: string
     name?: string | null
     email: string
     emailVerified?: Date | string | null
     password?: string | null
-    resetToken?: string | null
-    resetTokenExpiresAt?: number | null
     image?: string | null
     role?: $Enums.Role
     createdAt?: Date | string
     updatedAt?: Date | string
+    ownedFirepits?: FirepitCreateNestedManyWithoutOwnerInput
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     Authenticator?: AuthenticatorCreateNestedManyWithoutUserInput
   }
 
-  export type UserUncheckedCreateWithoutFirepitsInput = {
+  export type UserUncheckedCreateWithoutCreatedFirepitsInput = {
     id?: string
     name?: string | null
     email: string
     emailVerified?: Date | string | null
     password?: string | null
-    resetToken?: string | null
-    resetTokenExpiresAt?: number | null
     image?: string | null
     role?: $Enums.Role
     createdAt?: Date | string
     updatedAt?: Date | string
+    ownedFirepits?: FirepitUncheckedCreateNestedManyWithoutOwnerInput
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     Authenticator?: AuthenticatorUncheckedCreateNestedManyWithoutUserInput
   }
 
-  export type UserCreateOrConnectWithoutFirepitsInput = {
+  export type UserCreateOrConnectWithoutCreatedFirepitsInput = {
     where: UserWhereUniqueInput
-    create: XOR<UserCreateWithoutFirepitsInput, UserUncheckedCreateWithoutFirepitsInput>
+    create: XOR<UserCreateWithoutCreatedFirepitsInput, UserUncheckedCreateWithoutCreatedFirepitsInput>
   }
 
-  export type UserUpsertWithoutFirepitsInput = {
-    update: XOR<UserUpdateWithoutFirepitsInput, UserUncheckedUpdateWithoutFirepitsInput>
-    create: XOR<UserCreateWithoutFirepitsInput, UserUncheckedCreateWithoutFirepitsInput>
+  export type UserCreateWithoutOwnedFirepitsInput = {
+    id?: string
+    name?: string | null
+    email: string
+    emailVerified?: Date | string | null
+    password?: string | null
+    image?: string | null
+    role?: $Enums.Role
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdFirepits?: FirepitCreateNestedManyWithoutCreatedByInput
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    Authenticator?: AuthenticatorCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutOwnedFirepitsInput = {
+    id?: string
+    name?: string | null
+    email: string
+    emailVerified?: Date | string | null
+    password?: string | null
+    image?: string | null
+    role?: $Enums.Role
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdFirepits?: FirepitUncheckedCreateNestedManyWithoutCreatedByInput
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    Authenticator?: AuthenticatorUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutOwnedFirepitsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutOwnedFirepitsInput, UserUncheckedCreateWithoutOwnedFirepitsInput>
+  }
+
+  export type UserUpsertWithoutCreatedFirepitsInput = {
+    update: XOR<UserUpdateWithoutCreatedFirepitsInput, UserUncheckedUpdateWithoutCreatedFirepitsInput>
+    create: XOR<UserCreateWithoutCreatedFirepitsInput, UserUncheckedCreateWithoutCreatedFirepitsInput>
     where?: UserWhereInput
   }
 
-  export type UserUpdateToOneWithWhereWithoutFirepitsInput = {
+  export type UserUpdateToOneWithWhereWithoutCreatedFirepitsInput = {
     where?: UserWhereInput
-    data: XOR<UserUpdateWithoutFirepitsInput, UserUncheckedUpdateWithoutFirepitsInput>
+    data: XOR<UserUpdateWithoutCreatedFirepitsInput, UserUncheckedUpdateWithoutCreatedFirepitsInput>
   }
 
-  export type UserUpdateWithoutFirepitsInput = {
+  export type UserUpdateWithoutCreatedFirepitsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
-    resetToken?: NullableStringFieldUpdateOperationsInput | string | null
-    resetTokenExpiresAt?: NullableIntFieldUpdateOperationsInput | number | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    ownedFirepits?: FirepitUpdateManyWithoutOwnerNestedInput
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     Authenticator?: AuthenticatorUpdateManyWithoutUserNestedInput
   }
 
-  export type UserUncheckedUpdateWithoutFirepitsInput = {
+  export type UserUncheckedUpdateWithoutCreatedFirepitsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
-    resetToken?: NullableStringFieldUpdateOperationsInput | string | null
-    resetTokenExpiresAt?: NullableIntFieldUpdateOperationsInput | number | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    ownedFirepits?: FirepitUncheckedUpdateManyWithoutOwnerNestedInput
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     Authenticator?: AuthenticatorUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUpsertWithoutOwnedFirepitsInput = {
+    update: XOR<UserUpdateWithoutOwnedFirepitsInput, UserUncheckedUpdateWithoutOwnedFirepitsInput>
+    create: XOR<UserCreateWithoutOwnedFirepitsInput, UserUncheckedCreateWithoutOwnedFirepitsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutOwnedFirepitsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutOwnedFirepitsInput, UserUncheckedUpdateWithoutOwnedFirepitsInput>
+  }
+
+  export type UserUpdateWithoutOwnedFirepitsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdFirepits?: FirepitUpdateManyWithoutCreatedByNestedInput
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    Authenticator?: AuthenticatorUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutOwnedFirepitsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdFirepits?: FirepitUncheckedUpdateManyWithoutCreatedByNestedInput
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    Authenticator?: AuthenticatorUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type FirepitCreateManyCreatedByInput = {
+    id?: string
+    name: string
+    description?: string | null
+    latitude: number
+    longitude: number
+    city: string
+    pricePerDay?: number | null
+    optimalNumberOfVisitors?: number | null
+    ownerId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type FirepitCreateManyOwnerInput = {
@@ -10981,7 +11249,10 @@ export namespace Prisma {
     longitude: number
     city: string
     pricePerDay?: number | null
+    optimalNumberOfVisitors?: number | null
+    createdById: string
     createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type AccountCreateManyUserInput = {
@@ -11016,6 +11287,48 @@ export namespace Prisma {
     transports?: string | null
   }
 
+  export type FirepitUpdateWithoutCreatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    latitude?: FloatFieldUpdateOperationsInput | number
+    longitude?: FloatFieldUpdateOperationsInput | number
+    city?: StringFieldUpdateOperationsInput | string
+    pricePerDay?: NullableFloatFieldUpdateOperationsInput | number | null
+    optimalNumberOfVisitors?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    owner?: UserUpdateOneWithoutOwnedFirepitsNestedInput
+  }
+
+  export type FirepitUncheckedUpdateWithoutCreatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    latitude?: FloatFieldUpdateOperationsInput | number
+    longitude?: FloatFieldUpdateOperationsInput | number
+    city?: StringFieldUpdateOperationsInput | string
+    pricePerDay?: NullableFloatFieldUpdateOperationsInput | number | null
+    optimalNumberOfVisitors?: NullableIntFieldUpdateOperationsInput | number | null
+    ownerId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FirepitUncheckedUpdateManyWithoutCreatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    latitude?: FloatFieldUpdateOperationsInput | number
+    longitude?: FloatFieldUpdateOperationsInput | number
+    city?: StringFieldUpdateOperationsInput | string
+    pricePerDay?: NullableFloatFieldUpdateOperationsInput | number | null
+    optimalNumberOfVisitors?: NullableIntFieldUpdateOperationsInput | number | null
+    ownerId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type FirepitUpdateWithoutOwnerInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
@@ -11024,7 +11337,10 @@ export namespace Prisma {
     longitude?: FloatFieldUpdateOperationsInput | number
     city?: StringFieldUpdateOperationsInput | string
     pricePerDay?: NullableFloatFieldUpdateOperationsInput | number | null
+    optimalNumberOfVisitors?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: UserUpdateOneRequiredWithoutCreatedFirepitsNestedInput
   }
 
   export type FirepitUncheckedUpdateWithoutOwnerInput = {
@@ -11035,7 +11351,10 @@ export namespace Prisma {
     longitude?: FloatFieldUpdateOperationsInput | number
     city?: StringFieldUpdateOperationsInput | string
     pricePerDay?: NullableFloatFieldUpdateOperationsInput | number | null
+    optimalNumberOfVisitors?: NullableIntFieldUpdateOperationsInput | number | null
+    createdById?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type FirepitUncheckedUpdateManyWithoutOwnerInput = {
@@ -11046,7 +11365,10 @@ export namespace Prisma {
     longitude?: FloatFieldUpdateOperationsInput | number
     city?: StringFieldUpdateOperationsInput | string
     pricePerDay?: NullableFloatFieldUpdateOperationsInput | number | null
+    optimalNumberOfVisitors?: NullableIntFieldUpdateOperationsInput | number | null
+    createdById?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type AccountUpdateWithoutUserInput = {

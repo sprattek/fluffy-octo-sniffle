@@ -5,7 +5,7 @@ import { prisma } from '@workspace/database';
 import Credentials from 'next-auth/providers/credentials';
 import GitHub from 'next-auth/providers/github';
 import Google from 'next-auth/providers/google';
-import { signInSchema } from './lib/zod';
+import { signInSchema } from './lib/validations/auth';
 import Resend from 'next-auth/providers/resend';
 
 const nextAuth = NextAuth({
@@ -54,16 +54,38 @@ const nextAuth = NextAuth({
 	session: { strategy: 'jwt' },
 	callbacks: {
 		authorized({ request, auth }) {
-			const publicRoutes = ['/login', '/', '/register', '/forgot-password'];
+			const publicRoutes = [
+				'/login',
+				'/',
+				'/register',
+				'/forgot-password',
+				'/firepits',
+			];
 			const { pathname } = request.nextUrl;
 			if (!publicRoutes.includes(pathname) && !auth) {
 				return NextResponse.redirect(new URL('/login', request.url));
 			}
 			return true;
 		},
-		jwt({ token, trigger, session }) {
-			if (trigger === 'update') token.name = session?.user?.name;
+		jwt({ token, user, trigger, session }) {
+			// On first sign in, user object is available
+			if (user) {
+				token.id = user.id;
+			}
+
+			// Optional: propagate updates from session to token
+			if (trigger === 'update') {
+				token.name = session?.user?.name;
+			}
+
 			return token;
+		},
+		async session({ session, token }) {
+			// ✅ Add the user id manually
+			if (session.user && token?.id) {
+				session.user.id = token.id as string;
+			}
+			return session;
 		},
 	},
 	secret: process.env.AUTH_SECRET,
