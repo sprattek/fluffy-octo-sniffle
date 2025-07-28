@@ -1,10 +1,12 @@
 import { auth } from '@/auth';
+import { prisma } from '@workspace/database';
 import { Button } from '@workspace/ui/components/button';
 import { Plus } from 'lucide-react';
 import { redirect } from 'next/navigation';
 
 export default async function Firepits() {
 	const session = await auth();
+	const firepits = await prisma.firepit.findMany();
 
 	return (
 		<div className='flex items-center justify-center min-h-svh'>
@@ -17,6 +19,7 @@ export default async function Firepits() {
 							redirect('/firepits/create');
 						}}
 					>
+						<pre>{JSON.stringify(firepits, null, 2)}</pre>
 						<Button disabled={!session?.user}>
 							<Plus />
 							Add new firepit

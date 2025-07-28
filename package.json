@@ -7,7 +7,7 @@
 		"seed": "tsx packages/database/src/seed.ts"
 	},
 	"scripts": {
-		"copy:env": "cpy .env packages/database && cpy .env apps/web",
+		"copy:env": "cpy .env packages/database && cpy .env apps/web && cpy .env apps/api",
 		"build": "pnpm copy:env && turbo build",
 		"db:migrate:deploy": "pnpm copy:env && turbo run db:migrate:deploy",
 		"db:migrate:dev": "pnpm copy:env && turbo run db:migrate:dev",
