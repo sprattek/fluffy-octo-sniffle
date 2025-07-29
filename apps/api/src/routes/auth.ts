@@ -8,6 +8,8 @@ import { prisma } from '@workspace/database';
 import '../passport/github';
 import '../passport/google'; // add this alongside the GitHub import
 import { sendResetEmail } from '../lib/email';
+import isAuthenticated from '../middleware/isAuthenticated';
+import { requireAuth } from '../middleware/requireAuth';
 
 const router: express.Router = Router();
 
@@ -88,7 +90,7 @@ router.post('/register', async (req: Request, res: Response) => {
 	}
 });
 
-router.post('/forgot-password', async (req, res) => {
+router.post('/forgot-password', async (req: Request, res: Response) => {
 	const { email } = req.body;
 
 	const user = await prisma.user.findUnique({ where: { email } });
@@ -110,7 +112,7 @@ router.post('/forgot-password', async (req, res) => {
 	res.json({ message: 'Password reset email sent' });
 });
 
-router.post('/reset-password', async (req, res) => {
+router.post('/reset-password', async (req: Request, res: Response) => {
 	const { token, password, email } = req.body;
 
 	const verification = await prisma.verificationToken.findUnique({
@@ -153,6 +155,11 @@ router.post('/reset-password', async (req, res) => {
 	res.json({ message: 'Password updated successfully' });
 });
 
+// GET /auth/me - Get current user
+router.get('/me', requireAuth, (req: Request, res: Response) => {
+	res.json({ user: req.user });
+});
+
 // --- GitHub OAuth routes ---
 
 // Redirect to GitHub for authentication
@@ -168,7 +175,7 @@ router.get(
 		failureRedirect: '/login',
 		session: false,
 	}),
-	(req, res) => {
+	(req: Request, res: Response) => {
 		// 🎯 Success — return JWT or redirect with token
 		// Example: res.redirect(`/auth/success?token=${token}`);
 		res.json({
@@ -195,7 +202,7 @@ router.get(
 		failureRedirect: '/login',
 		session: false, // ⚠️ disable session unless you're using it
 	}),
-	(req, res) => {
+	(req: Request, res: Response) => {
 		// ✅ You can return a JWT or redirect user with token
 		res.json({
 			message: 'Google login successful',

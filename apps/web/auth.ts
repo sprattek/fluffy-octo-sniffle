@@ -53,7 +53,7 @@ const nextAuth = NextAuth({
 	],
 	session: { strategy: 'jwt' },
 	callbacks: {
-		authorized({ request, auth }) {
+		/*authorized({ request, auth }) {
 			const publicRoutes = [
 				'/login',
 				'/',
@@ -66,7 +66,7 @@ const nextAuth = NextAuth({
 				return NextResponse.redirect(new URL('/login', request.url));
 			}
 			return true;
-		},
+		},*/
 		jwt({ token, user, trigger, session }) {
 			// On first sign in, user object is available
 			if (user) {

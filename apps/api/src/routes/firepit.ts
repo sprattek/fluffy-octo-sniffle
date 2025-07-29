@@ -1,7 +1,7 @@
-import express, { Router, Request, Response, NextFunction } from 'express';
+import express, { Router, Request, Response } from 'express';
 import { firepitSchema } from '@workspace/validators'; // Adjust the actual import path
 import { prisma } from '@workspace/database'; // Adjust based on how you're exporting Prisma
-import isAuthenticated from '../middleware/isAuthenticated';
+import { requireAuth } from '../middleware/requireAuth';
 
 const router: express.Router = Router();
 
@@ -31,7 +31,7 @@ router.get('/:id', async (req: Request, res: Response) => {
 });
 
 // POST /api/firepits
-router.post('/', isAuthenticated, async (req: Request, res: Response) => {
+router.post('/', requireAuth, async (req: Request, res: Response) => {
 	try {
 		const userId = req.user!.id;
 		const parsed = firepitSchema.safeParse(req.body);
@@ -52,7 +52,7 @@ router.post('/', isAuthenticated, async (req: Request, res: Response) => {
 });
 
 // PUT /api/firepits/:id
-router.put('/:id', isAuthenticated, async (req: Request, res: Response) => {
+router.put('/:id', requireAuth, async (req: Request, res: Response) => {
 	try {
 		const userId = req.user!.id;
 		const parsed = firepitSchema.safeParse(req.body);
@@ -80,7 +80,7 @@ router.put('/:id', isAuthenticated, async (req: Request, res: Response) => {
 });
 
 // DELETE /api/firepits/:id
-router.delete('/:id', isAuthenticated, async (req: Request, res: Response) => {
+router.delete('/:id', requireAuth, async (req: Request, res: Response) => {
 	try {
 		const userId = req.user!.id;
 		const existing = await prisma.firepit.findUnique({

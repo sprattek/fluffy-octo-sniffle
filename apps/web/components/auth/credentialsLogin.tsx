@@ -1,30 +1,33 @@
 'use client';
 
-import { logIn } from '@/app/login/actions';
 import { Button } from '@workspace/ui/components/button';
 import { Input } from '@workspace/ui/components/input';
 import { Label } from '@workspace/ui/components/label';
+import { loginSchema } from '@workspace/validators';
 import { Loader2Icon } from 'lucide-react';
 import Link from 'next/link';
-import { useActionState, useEffect, useState, useTransition } from 'react';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
-const initialState = { success: false, error: '' };
+const initialState: { success: boolean; error?: string } = { success: false };
 
 export function CredentialsLogin() {
-	const [state, formAction] = useActionState(
-		(_prevState: any, formData: FormData) => logIn(formData),
-		initialState
-	);
-	const [isPending, startTransition] = useTransition();
 	const [form, setForm] = useState({
 		email: '',
 		password: '',
 	});
+	const [isSubmitting, setIsSubmitting] = useState(false);
+	const [state, setState] = useState(initialState);
+	const [fieldErrors, setFieldErrors] = useState<
+		Record<string, string[] | undefined>
+	>({});
+	const router = useRouter();
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { name, value } = e.target;
 		setForm((prev) => ({ ...prev, [name]: value }));
+		setFieldErrors((prev) => ({ ...prev, [name]: undefined }));
 	};
 
 	// 🎯 Show toast on state change
@@ -40,16 +43,54 @@ export function CredentialsLogin() {
 		}
 	}, [state, toast]);
 
+	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+		setIsSubmitting(true);
+		e.preventDefault();
+
+		const parsed = loginSchema.safeParse(form);
+		if (!parsed.success) {
+			const errors = parsed.error.flatten().fieldErrors;
+			setFieldErrors(errors);
+			setState({
+				success: false,
+				error: Object.values(errors).flat().join(', ') || 'Invalid input',
+			});
+			setIsSubmitting(false);
+			return;
+		}
+
+		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify(parsed.data),
+		});
+
+		const data = await res.json();
+
+		if (!res.ok) {
+			setState({ success: false, error: data?.error || 'Unknown error' });
+			setIsSubmitting(false);
+			return;
+		}
+
+		setState({ success: true });
+		setIsSubmitting(false);
+
+		localStorage.setItem(
+			'firepit-auth',
+			JSON.stringify({ token: data.token, user: data.user })
+		);
+
+		router.push('/dashboard');
+	};
+
 	return (
-		<form
-			action={(formData) => {
-				startTransition(() => formAction(formData));
-			}}
-		>
+		<form onSubmit={handleSubmit}>
 			<div className='grid gap-6'>
 				<div className='grid gap-3'>
 					<Label htmlFor='email'>Email</Label>
 					<Input
+						aria-invalid={!!fieldErrors.email || undefined}
 						id='email'
 						name='email'
 						type='email'
@@ -70,6 +111,7 @@ export function CredentialsLogin() {
 						</Link>
 					</div>
 					<Input
+						aria-invalid={!!fieldErrors.password || undefined}
 						id='password'
 						name='password'
 						type='password'
@@ -82,8 +124,8 @@ export function CredentialsLogin() {
 					<p className='text-sm text-red-500'>{state.error}</p>
 				)}
 
-				<Button type='submit' disabled={isPending} className='w-full'>
-					{isPending ? <Loader2Icon className='animate-spin' /> : 'Login'}
+				<Button type='submit' disabled={isSubmitting} className='w-full'>
+					{isSubmitting ? <Loader2Icon className='animate-spin' /> : 'Login'}
 				</Button>
 			</div>
 			<div className='text-center text-sm mt-6'>

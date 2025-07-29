@@ -154,6 +154,9 @@ importers:
       '@workspace/ui':
         specifier: workspace:*
         version: link:../../packages/ui
+      '@workspace/validators':
+        specifier: workspace:*
+        version: link:../../packages/validators
       bcryptjs:
         specifier: ^3.0.2
         version: 3.0.2

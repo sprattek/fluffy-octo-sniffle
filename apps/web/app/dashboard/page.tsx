@@ -1,35 +1,19 @@
-import { auth, signOut } from '@/auth';
-import { Button } from '@workspace/ui/components/button';
-import { LogOut } from 'lucide-react';
-import { redirect } from 'next/navigation';
+'use client';
 
-export default async function DashboardPage() {
-	const session = await auth();
+import { useAuth } from '@/auth-context';
+import { LogoutButton } from '@/components/auth/logoutButton';
+import { RequireAuth } from '@/components/auth/requireAuth';
 
-	if (!session?.user) {
-		// Just in case — fallback protection
-		redirect('/login');
-	}
+export default function DashboardPage() {
+	const { user } = useAuth();
 
 	return (
-		<div className='max-w-3xl mx-auto mt-10'>
-			<h1 className='text-2xl font-bold'>Welcome to your dashboard</h1>
-			<p className='mt-2 text-gray-600'>Logged in as: {session.user.email}</p>
-			<form
-				action={async () => {
-					'use server';
-					await signOut({
-						redirectTo: '/login',
-					});
-				}}
-			>
-				<div className='flex flex-col gap-4'>
-					<Button type='submit' variant='outline' className='w-full'>
-						<LogOut />
-						Sign out
-					</Button>
-				</div>
-			</form>
-		</div>
+		<RequireAuth>
+			<div className='max-w-3xl mx-auto mt-10'>
+				<h1 className='text-2xl font-bold'>Welcome to your dashboard</h1>
+				<p className='mt-2 text-gray-600'>Logged in as: {user?.email}</p>
+				<LogoutButton />
+			</div>
+		</RequireAuth>
 	);
 }
