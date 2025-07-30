@@ -2,6 +2,7 @@ import express, { Router, Request, Response } from 'express';
 import { firepitSchema } from '@workspace/validators'; // Adjust the actual import path
 import { prisma } from '@workspace/database'; // Adjust based on how you're exporting Prisma
 import { requireAuth } from '../middleware/requireAuth';
+import updateFirepitLocation from '../utils/updateFirepitLocation';
 
 const router: express.Router = Router();
 
@@ -44,6 +45,11 @@ router.post('/', requireAuth, async (req: Request, res: Response) => {
 				createdById: userId,
 			},
 		});
+		await updateFirepitLocation(
+			firepit.id,
+			parsed.data.longitude,
+			parsed.data.latitude
+		);
 		res.status(201).json(firepit);
 	} catch (err) {
 		console.error(err);
@@ -73,6 +79,13 @@ router.put('/:id', requireAuth, async (req: Request, res: Response) => {
 			where: { id: req.params.id },
 			data: parsed.data,
 		});
+
+		await updateFirepitLocation(
+			req.params.id!,
+			parsed.data.longitude,
+			parsed.data.latitude
+		);
+
 		res.json(updated);
 	} catch (err) {
 		res.status(500).json({ error: 'Error updating firepit' });

@@ -32,3 +32,9 @@ export const registerSchema = object({
 	message: 'Passwords do not match',
 	path: ['passwordConfirm'],
 });
+
+export const passwordResetSchema = object({
+	email: string({ required_error: 'Email is required' })
+		.min(3, 'Email is required')
+		.email('Invalid email'),
+});

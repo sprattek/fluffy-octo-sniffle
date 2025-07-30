@@ -5,7 +5,7 @@ import passport from 'passport';
 import session from 'express-session';
 import authRoutes from './routes/auth';
 import firepitRoutes from './routes/firepit';
-import './auth/passport'; // important!
+import './passport/local'; // important!
 
 dotenv.config();
 

@@ -1,6 +1,5 @@
 'use client';
 
-import { signIn } from 'next-auth/react';
 import { Button } from '@workspace/ui/components/button';
 import { Loader2Icon, Mail } from 'lucide-react';
 import { useState } from 'react';
@@ -10,7 +9,7 @@ export function GoogleLogin() {
 
 	const handleLogin = async () => {
 		setLoading(true); // UI updates immediately
-		await signIn('google', { redirectTo: '/' });
+		window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/auth/google`;
 	};
 
 	return (

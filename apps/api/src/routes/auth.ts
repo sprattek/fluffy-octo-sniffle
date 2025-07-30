@@ -6,9 +6,8 @@ import crypto from 'crypto';
 import { registerSchema } from '@workspace/validators';
 import { prisma } from '@workspace/database';
 import '../passport/github';
-import '../passport/google'; // add this alongside the GitHub import
+import '../passport/google';
 import { sendResetEmail } from '../lib/email';
-import isAuthenticated from '../middleware/isAuthenticated';
 import { requireAuth } from '../middleware/requireAuth';
 
 const router: express.Router = Router();
@@ -94,7 +93,7 @@ router.post('/forgot-password', async (req: Request, res: Response) => {
 	const { email } = req.body;
 
 	const user = await prisma.user.findUnique({ where: { email } });
-	if (!user) return res.status(404).json({ message: 'User not found' });
+	if (!user) return res.status(404).json({ error: 'User not found' });
 
 	const token = crypto.randomBytes(32).toString('hex');
 	const expires = new Date(Date.now() + 1000 * 60 * 60); // 1 hour
@@ -113,7 +112,7 @@ router.post('/forgot-password', async (req: Request, res: Response) => {
 });
 
 router.post('/reset-password', async (req: Request, res: Response) => {
-	const { token, password, email } = req.body;
+	const { token, email } = req.body;
 
 	const verification = await prisma.verificationToken.findUnique({
 		where: {
@@ -125,7 +124,7 @@ router.post('/reset-password', async (req: Request, res: Response) => {
 	});
 
 	if (!verification || verification.expires < new Date()) {
-		return res.status(400).json({ message: 'Invalid or expired token' });
+		return res.status(400).json({ error: 'Invalid or expired token' });
 	}
 
 	const user = await prisma.user.findUnique({
@@ -133,15 +132,21 @@ router.post('/reset-password', async (req: Request, res: Response) => {
 	});
 
 	if (!user) {
-		return res.status(404).json({ message: 'User not found' });
+		return res.status(404).json({ error: 'User not found' });
 	}
 
-	const hashedPassword = await bcrypt.hash(password, 10);
+	const userToken = jwt.sign(
+		{ userId: user.id, email: user.email },
+		process.env.AUTH_SECRET!,
+		{ expiresIn: '7d' }
+	);
 
-	await prisma.user.update({
-		where: { id: user.id },
-		data: { password: hashedPassword },
-	});
+	if (!user.emailVerified) {
+		await prisma.user.update({
+			where: { id: user.id },
+			data: { emailVerified: new Date() },
+		});
+	}
 
 	await prisma.verificationToken.delete({
 		where: {
@@ -152,7 +157,14 @@ router.post('/reset-password', async (req: Request, res: Response) => {
 		},
 	});
 
-	res.json({ message: 'Password updated successfully' });
+	return res.json({
+		token: userToken,
+		user: {
+			id: user.id,
+			email: user.email,
+			name: user.name,
+		},
+	});
 });
 
 // GET /auth/me - Get current user
@@ -177,11 +189,14 @@ router.get(
 	}),
 	(req: Request, res: Response) => {
 		// 🎯 Success — return JWT or redirect with token
-		// Example: res.redirect(`/auth/success?token=${token}`);
-		res.json({
-			message: 'GitHub login successful',
-			user: req.user,
-		});
+		const token = jwt.sign(
+			{ userId: req.user?.id, email: req.user?.email },
+			process.env.AUTH_SECRET!,
+			{ expiresIn: '7d' }
+		);
+
+		// Redirect to frontend with token
+		res.redirect(`${process.env.FRONTEND_URL}/auth/callback?token=${token}`);
 	}
 );
 
@@ -203,11 +218,15 @@ router.get(
 		session: false, // ⚠️ disable session unless you're using it
 	}),
 	(req: Request, res: Response) => {
-		// ✅ You can return a JWT or redirect user with token
-		res.json({
-			message: 'Google login successful',
-			user: req.user,
-		});
+		// 🎯 Success — return JWT or redirect with token
+		const token = jwt.sign(
+			{ userId: req.user?.id, email: req.user?.email },
+			process.env.AUTH_SECRET!,
+			{ expiresIn: '7d' }
+		);
+
+		// Redirect to frontend with token
+		res.redirect(`${process.env.FRONTEND_URL}/auth/callback?token=${token}`);
 	}
 );
 

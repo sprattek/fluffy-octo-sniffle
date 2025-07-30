@@ -10,7 +10,7 @@ passport.use(
 		{
 			clientID: process.env.AUTH_GITHUB_ID!,
 			clientSecret: process.env.AUTH_GITHUB_SECRET!,
-			callbackURL: '/api/auth/github/callback',
+			callbackURL: '/auth/github/callback',
 		},
 		async (
 			accessToken: string,
@@ -21,11 +21,7 @@ passport.use(
 			try {
 				const provider = 'github';
 				const providerAccountId = profile.id;
-				const email = profile.emails?.[0]?.value;
-
-				if (!email) {
-					return done(new Error('No email found from GitHub'), null);
-				}
+				const email = profile.emails?.[0]?.value ?? '';
 
 				const existingAccount = await prisma.account.findUnique({
 					where: {

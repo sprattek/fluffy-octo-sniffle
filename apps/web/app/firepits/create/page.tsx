@@ -21,13 +21,16 @@ import { Input } from '@workspace/ui/components/input';
 import { Textarea } from '@workspace/ui/components/textarea';
 import { Button } from '@workspace/ui/components/button';
 import { useForm } from 'react-hook-form';
-import { FirepitSchemaModel, firepitSchema } from '@/lib/validations/firepit';
 import { FormBlock } from '@/components/forms';
 import { CheckCircle, Euro, Loader2Icon, Users } from 'lucide-react';
-import { createFirepit } from '../actions';
 import { useState } from 'react';
+import { firepitSchema, FirepitSchemaModel } from '@workspace/validators';
+import { useAuth } from '@/auth-context';
+import { RequireAuth } from '@/components/auth/requireAuth';
+import { redirect } from 'next/navigation';
 
 export default function CreateFirepit() {
+	const { isAuthenticated, token } = useAuth();
 	const [loading, setLoading] = useState(false);
 
 	const form = useForm<FirepitSchemaModel>({
@@ -45,209 +48,253 @@ export default function CreateFirepit() {
 
 	const onSubmit = async (data: FirepitSchemaModel) => {
 		setLoading(true);
-		const result = await createFirepit({ data });
-		console.log(result);
-		toast('You submitted the following values', {
-			description: (
-				<pre className='mt-2 w-[320px] rounded-md bg-neutral-950 p-4'>
-					<code className='text-white'>{JSON.stringify(data, null, 2)}</code>
-				</pre>
-			),
-		});
-		setLoading(false);
+
+		if (!isAuthenticated) {
+			return {
+				success: false,
+				error: 'You must be logged in to create a firepit',
+			};
+		}
+
+		const parsed = firepitSchema.safeParse(data);
+
+		if (!parsed.success) {
+			const errors = parsed.error.flatten().fieldErrors;
+			return {
+				success: false,
+				error: Object.values(errors).flat().join(', ') || 'Invalid input',
+			};
+		}
+
+		try {
+			await fetch(`${process.env.NEXT_PUBLIC_API_URL}/firepits`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					Authorization: `Bearer ${token}`,
+				},
+				body: JSON.stringify(data),
+			});
+
+			toast('You submitted the following values', {
+				description: (
+					<pre className='mt-2 w-[320px] rounded-md bg-neutral-950 p-4'>
+						<code className='text-white'>{JSON.stringify(data, null, 2)}</code>
+					</pre>
+				),
+			});
+
+			setLoading(false);
+
+			redirect(`/firepits`);
+		} catch (err: any) {
+			setLoading(false);
+			console.error('[ERROR]', err);
+			return {
+				success: false,
+				error: 'Something went wrong. Please try again later.',
+			};
+		}
 	};
 
 	return (
-		<div className='mx-auto max-w-2xl py-16 px-4 sm:py-24 sm:px-6 lg:max-w-7xl lg:px-8'>
-			<Form {...form}>
-				<form onSubmit={form.handleSubmit(onSubmit)}>
-					<div className='space-y-12'>
-						<FormBlock
-							title='General'
-							description='This information will be displayed publicly so be careful what you share.'
-						>
-							<div className='sm:col-span-4'>
-								<FormField
-									control={form.control}
-									name='name'
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>Name</FormLabel>
-											<FormControl>
-												<Input placeholder='Firepit' {...field} />
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-							</div>
-
-							<div className='col-span-full'>
-								<FormField
-									control={form.control}
-									name='description'
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>Description</FormLabel>
-											<FormControl>
-												<Textarea rows={3} {...field} />
-											</FormControl>
-											<FormDescription>
-												Write a few sentences about this firepit.
-											</FormDescription>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-							</div>
-						</FormBlock>
-						<FormBlock
-							title='Location'
-							description='This information will help people to find a firepit.'
-						>
-							<div className='sm:col-span-2 sm:col-start-1'>
-								<FormField
-									control={form.control}
-									name='city'
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>City</FormLabel>
-											<FormControl>
-												<Input placeholder='City' {...field} />
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-							</div>
-
-							<div className='sm:col-span-2'>
-								<FormField
-									control={form.control}
-									name='latitude'
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>Latitude</FormLabel>
-											<FormControl>
-												<Input
-													placeholder='Latitude'
-													type='number'
-													{...field}
-												/>
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-							</div>
-
-							<div className='sm:col-span-2'>
-								<FormField
-									control={form.control}
-									name='longitude'
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>Longitude</FormLabel>
-											<FormControl>
-												<Input
-													placeholder='Longitude'
-													type='number'
-													{...field}
-												/>
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-							</div>
-						</FormBlock>
-						<FormBlock
-							title='Reservation'
-							description='All the reservation information will be displayed publicly so be careful what you share.'
-						>
-							<div className='sm:col-span-4'>
-								<FormField
-									control={form.control}
-									name='pricePerDay'
-									render={({ field, fieldState }) => (
-										<FormItem>
-											<FormLabel>Price per day</FormLabel>
-											<InputBase error={Boolean(fieldState.error)}>
-												<InputBaseAdornment>
-													<Euro />
-												</InputBaseAdornment>
-												<InputBaseControl>
-													<FormControl>
-														<InputBaseInput
-															placeholder='0'
-															type='number'
-															{...field}
-														/>
-													</FormControl>
-												</InputBaseControl>
-												<InputBaseAdornment>
-													<p>EUR</p>
-												</InputBaseAdornment>
-											</InputBase>
-											<FormDescription>
-												Keep blank or set to 0 if the firepit is free of charge.
-											</FormDescription>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-							</div>
-
-							<div className='sm:col-span-4'>
-								<FormField
-									control={form.control}
-									name='optimalNumberOfVisitors'
-									render={({ field, fieldState }) => (
-										<FormItem>
-											<FormLabel>Optimal number of visitors</FormLabel>
-											<InputBase error={Boolean(fieldState.error)}>
-												<InputBaseAdornment>
-													<Users />
-												</InputBaseAdornment>
-												<InputBaseControl>
-													<FormControl>
-														<InputBaseInput
-															type='number'
-															placeholder='6'
-															{...field}
-														/>
-													</FormControl>
-												</InputBaseControl>
-												<InputBaseAdornment>
-													<p>Visitors</p>
-												</InputBaseAdornment>
-											</InputBase>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-							</div>
-						</FormBlock>
-						<div className='mt-6 flex items-center justify-end gap-x-6'>
-							<Button type='button' variant='ghost'>
-								Cancel
-							</Button>
-							<Button
-								type='submit'
-								variant='default'
-								disabled={!form.formState.isValid || loading}
+		<RequireAuth>
+			<div className='mx-auto max-w-2xl py-16 px-4 sm:py-24 sm:px-6 lg:max-w-7xl lg:px-8'>
+				<Form {...form}>
+					<form onSubmit={form.handleSubmit(onSubmit)}>
+						<div className='space-y-12'>
+							<FormBlock
+								title='General'
+								description='This information will be displayed publicly so be careful what you share.'
 							>
-								{loading ? (
-									<Loader2Icon className='animate-spin' />
-								) : (
-									<CheckCircle />
-								)}
-								{loading ? 'Please wait...' : 'Submit'}
-							</Button>
+								<div className='sm:col-span-4'>
+									<FormField
+										control={form.control}
+										name='name'
+										render={({ field }) => (
+											<FormItem>
+												<FormLabel>Name</FormLabel>
+												<FormControl>
+													<Input placeholder='Firepit' {...field} />
+												</FormControl>
+												<FormMessage />
+											</FormItem>
+										)}
+									/>
+								</div>
+
+								<div className='col-span-full'>
+									<FormField
+										control={form.control}
+										name='description'
+										render={({ field }) => (
+											<FormItem>
+												<FormLabel>Description</FormLabel>
+												<FormControl>
+													<Textarea rows={3} {...field} />
+												</FormControl>
+												<FormDescription>
+													Write a few sentences about this firepit.
+												</FormDescription>
+												<FormMessage />
+											</FormItem>
+										)}
+									/>
+								</div>
+							</FormBlock>
+							<FormBlock
+								title='Location'
+								description='This information will help people to find a firepit.'
+							>
+								<div className='sm:col-span-2 sm:col-start-1'>
+									<FormField
+										control={form.control}
+										name='city'
+										render={({ field }) => (
+											<FormItem>
+												<FormLabel>City</FormLabel>
+												<FormControl>
+													<Input placeholder='City' {...field} />
+												</FormControl>
+												<FormMessage />
+											</FormItem>
+										)}
+									/>
+								</div>
+
+								<div className='sm:col-span-2'>
+									<FormField
+										control={form.control}
+										name='latitude'
+										render={({ field }) => (
+											<FormItem>
+												<FormLabel>Latitude</FormLabel>
+												<FormControl>
+													<Input
+														placeholder='Latitude'
+														type='number'
+														{...field}
+													/>
+												</FormControl>
+												<FormMessage />
+											</FormItem>
+										)}
+									/>
+								</div>
+
+								<div className='sm:col-span-2'>
+									<FormField
+										control={form.control}
+										name='longitude'
+										render={({ field }) => (
+											<FormItem>
+												<FormLabel>Longitude</FormLabel>
+												<FormControl>
+													<Input
+														placeholder='Longitude'
+														type='number'
+														{...field}
+													/>
+												</FormControl>
+												<FormMessage />
+											</FormItem>
+										)}
+									/>
+								</div>
+							</FormBlock>
+							<FormBlock
+								title='Reservation'
+								description='All the reservation information will be displayed publicly so be careful what you share.'
+							>
+								<div className='sm:col-span-4'>
+									<FormField
+										control={form.control}
+										name='pricePerDay'
+										render={({ field, fieldState }) => (
+											<FormItem>
+												<FormLabel>Price per day</FormLabel>
+												<InputBase error={Boolean(fieldState.error)}>
+													<InputBaseAdornment>
+														<Euro />
+													</InputBaseAdornment>
+													<InputBaseControl>
+														<FormControl>
+															<InputBaseInput
+																placeholder='0'
+																type='number'
+																{...field}
+															/>
+														</FormControl>
+													</InputBaseControl>
+													<InputBaseAdornment>
+														<p>EUR</p>
+													</InputBaseAdornment>
+												</InputBase>
+												<FormDescription>
+													Keep blank or set to 0 if the firepit is free of
+													charge.
+												</FormDescription>
+												<FormMessage />
+											</FormItem>
+										)}
+									/>
+								</div>
+
+								<div className='sm:col-span-4'>
+									<FormField
+										control={form.control}
+										name='optimalNumberOfVisitors'
+										render={({ field, fieldState }) => (
+											<FormItem>
+												<FormLabel>Optimal number of visitors</FormLabel>
+												<InputBase error={Boolean(fieldState.error)}>
+													<InputBaseAdornment>
+														<Users />
+													</InputBaseAdornment>
+													<InputBaseControl>
+														<FormControl>
+															<InputBaseInput
+																type='number'
+																placeholder='6'
+																{...field}
+															/>
+														</FormControl>
+													</InputBaseControl>
+													<InputBaseAdornment>
+														<p>Visitors</p>
+													</InputBaseAdornment>
+												</InputBase>
+												<FormMessage />
+											</FormItem>
+										)}
+									/>
+								</div>
+							</FormBlock>
+							<div className='mt-6 flex items-center justify-end gap-x-6'>
+								<Button
+									type='button'
+									variant='ghost'
+									onClick={() => redirect('/firepits')}
+								>
+									Cancel
+								</Button>
+								<Button
+									type='submit'
+									variant='default'
+									disabled={!form.formState.isValid || loading}
+								>
+									{loading ? (
+										<Loader2Icon className='animate-spin' />
+									) : (
+										<CheckCircle />
+									)}
+									{loading ? 'Please wait...' : 'Submit'}
+								</Button>
+							</div>
 						</div>
-					</div>
-				</form>
-			</Form>
-		</div>
+					</form>
+				</Form>
+			</div>
+		</RequireAuth>
 	);
 }

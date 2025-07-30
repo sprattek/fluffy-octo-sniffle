@@ -1,6 +1,5 @@
 'use client';
 
-import { signIn } from 'next-auth/react';
 import { Button } from '@workspace/ui/components/button';
 import { Github, Loader2Icon } from 'lucide-react';
 import { useState } from 'react';
@@ -10,7 +9,7 @@ export function GithubLogin() {
 
 	const handleLogin = async () => {
 		setLoading(true); // UI updates immediately
-		await signIn('github', { redirectTo: '/' });
+		window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/auth/github`;
 	};
 
 	return (

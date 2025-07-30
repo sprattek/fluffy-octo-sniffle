@@ -12,12 +12,14 @@ interface AuthContextType {
 	user: User | null;
 	loading: boolean;
 	isAuthenticated: boolean;
+	token: string | null;
 	refetch: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
+	const [token, setToken] = useState<string | null>(null);
 	const [user, setUser] = useState<User | null>(null);
 	const [loading, setLoading] = useState(true);
 
@@ -31,6 +33,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 			if (!token) {
 				setUser(null);
+				setToken(null);
 				return;
 			}
 
@@ -43,11 +46,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 			if (res.ok) {
 				const data = await res.json();
 				setUser(data.user);
+				setToken(token);
 			} else {
 				setUser(null);
+				setToken(null);
 			}
 		} catch {
 			setUser(null);
+			setToken(null);
 		} finally {
 			setLoading(false);
 		}
@@ -60,6 +66,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 	return (
 		<AuthContext.Provider
 			value={{
+				token,
 				user,
 				loading,
 				isAuthenticated: !!user,

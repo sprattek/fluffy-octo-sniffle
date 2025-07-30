@@ -11,7 +11,9 @@ export default function DashboardPage() {
 		<RequireAuth>
 			<div className='max-w-3xl mx-auto mt-10'>
 				<h1 className='text-2xl font-bold'>Welcome to your dashboard</h1>
-				<p className='mt-2 text-gray-600'>Logged in as: {user?.email}</p>
+				<p className='mt-2 text-gray-600'>
+					Logged in as: {user?.name || user?.email}
+				</p>
 				<LogoutButton />
 			</div>
 		</RequireAuth>
