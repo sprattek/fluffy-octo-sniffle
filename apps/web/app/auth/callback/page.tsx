@@ -3,10 +3,12 @@
 import { useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { toast } from 'sonner';
+import { useAuth } from '@/auth-context';
 
 export default function OAuthCallbackPage() {
 	const searchParams = useSearchParams();
 	const router = useRouter();
+	const { refetch } = useAuth();
 
 	const fetchUser = async (token: string) => {
 		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, {
@@ -21,6 +23,7 @@ export default function OAuthCallbackPage() {
 				'firepit-auth',
 				JSON.stringify({ token: token, user: data.user })
 			);
+			await refetch();
 			router.replace('/dashboard'); // Or wherever you want to land after login
 		} else {
 			router.replace('/login');

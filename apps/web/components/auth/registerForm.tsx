@@ -17,6 +17,7 @@ import { Loader2Icon } from 'lucide-react';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { submitRegistration } from '@/app/register/actions';
+import { useAuth } from '@/auth-context';
 
 const initialState: { success: boolean; error?: string } = { success: false };
 
@@ -36,6 +37,7 @@ export function RegisterForm({
 		Record<string, string[] | undefined>
 	>({});
 	const router = useRouter();
+	const { refetch } = useAuth();
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { name, value } = e.target;
@@ -74,6 +76,7 @@ export function RegisterForm({
 
 		setState({ success: true });
 		setIsSubmitting(false);
+		await refetch();
 		router.push('/dashboard');
 	};
 

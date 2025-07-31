@@ -1,6 +1,7 @@
 'use client';
 
 import { submitLogin } from '@/app/login/actions';
+import { useAuth } from '@/auth-context';
 import { Button } from '@workspace/ui/components/button';
 import { Input } from '@workspace/ui/components/input';
 import { Label } from '@workspace/ui/components/label';
@@ -23,6 +24,7 @@ export function CredentialsLogin() {
 		Record<string, string[] | undefined>
 	>({});
 	const router = useRouter();
+	const { refetch } = useAuth();
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { name, value } = e.target;
@@ -61,6 +63,7 @@ export function CredentialsLogin() {
 
 		setState({ success: true });
 		setIsSubmitting(false);
+		await refetch();
 		router.push('/dashboard');
 	};
 

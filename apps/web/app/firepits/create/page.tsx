@@ -29,6 +29,7 @@ import { useAuth } from '@/auth-context';
 import { RequireAuth } from '@/components/auth/requireAuth';
 import { redirect } from 'next/navigation';
 import { submitFirepit } from '../actions';
+import { MapComponent } from '@/components/map';
 
 export default function CreateFirepit() {
 	const { isAuthenticated, token } = useAuth();
@@ -248,6 +249,7 @@ export default function CreateFirepit() {
 									/>
 								</div>
 							</FormBlock>
+							<MapComponent />
 							<div className='mt-6 flex items-center justify-end gap-x-6'>
 								<Button
 									type='button'
