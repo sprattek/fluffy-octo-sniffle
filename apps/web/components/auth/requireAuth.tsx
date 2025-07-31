@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/auth-context';
 
 export function RequireAuth({ children }: { children: React.ReactNode }) {
-	const { user, loading, isAuthenticated } = useAuth();
+	const { loading, isAuthenticated } = useAuth();
 	const router = useRouter();
 
 	useEffect(() => {

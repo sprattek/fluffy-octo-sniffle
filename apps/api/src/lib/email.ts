@@ -8,7 +8,7 @@ export async function sendResetEmail(email: string, token: string) {
 	await resend.emails.send({
 		from: 'noreply@info.tattek.sk',
 		to: email,
-		subject: 'Reset your password',
-		html: `<p>Click <a href="${resetLink}">here</a> to reset your password.</p>`,
+		subject: 'Access link to your firepit account',
+		html: `<p>Click <a href="${resetLink}">here</a> to access the firepit account.</p>`,
 	});
 }

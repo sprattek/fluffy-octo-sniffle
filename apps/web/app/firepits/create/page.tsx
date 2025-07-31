@@ -28,6 +28,7 @@ import { firepitSchema, FirepitSchemaModel } from '@workspace/validators';
 import { useAuth } from '@/auth-context';
 import { RequireAuth } from '@/components/auth/requireAuth';
 import { redirect } from 'next/navigation';
+import { submitFirepit } from '../actions';
 
 export default function CreateFirepit() {
 	const { isAuthenticated, token } = useAuth();
@@ -56,45 +57,22 @@ export default function CreateFirepit() {
 			};
 		}
 
-		const parsed = firepitSchema.safeParse(data);
+		const result = await submitFirepit(data, token!);
 
-		if (!parsed.success) {
-			const errors = parsed.error.flatten().fieldErrors;
-			return {
-				success: false,
-				error: Object.values(errors).flat().join(', ') || 'Invalid input',
-			};
+		if (!result.success) {
+			setLoading(false);
+			return;
 		}
 
-		try {
-			await fetch(`${process.env.NEXT_PUBLIC_API_URL}/firepits`, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-					Authorization: `Bearer ${token}`,
-				},
-				body: JSON.stringify(data),
-			});
+		toast('Firepit created successfully', {
+			description: (
+				<pre className='mt-2 w-[320px] rounded-md bg-neutral-950 p-4'>
+					<code className='text-white'>{JSON.stringify(data, null, 2)}</code>
+				</pre>
+			),
+		});
 
-			toast('You submitted the following values', {
-				description: (
-					<pre className='mt-2 w-[320px] rounded-md bg-neutral-950 p-4'>
-						<code className='text-white'>{JSON.stringify(data, null, 2)}</code>
-					</pre>
-				),
-			});
-
-			setLoading(false);
-
-			redirect(`/firepits`);
-		} catch (err: any) {
-			setLoading(false);
-			console.error('[ERROR]', err);
-			return {
-				success: false,
-				error: 'Something went wrong. Please try again later.',
-			};
-		}
+		redirect(`/firepits`);
 	};
 
 	return (

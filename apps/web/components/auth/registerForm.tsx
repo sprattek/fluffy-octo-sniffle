@@ -13,10 +13,10 @@ import { Input } from '@workspace/ui/components/input';
 import { Label } from '@workspace/ui/components/label';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { registerSchema } from '@workspace/validators';
 import { Loader2Icon } from 'lucide-react';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
+import { submitRegistration } from '@/app/register/actions';
 
 const initialState: { success: boolean; error?: string } = { success: false };
 
@@ -60,43 +60,20 @@ export function RegisterForm({
 		setIsSubmitting(true);
 		e.preventDefault();
 
-		const parsed = registerSchema.safeParse(form);
-		if (!parsed.success) {
-			const errors = parsed.error.flatten().fieldErrors;
-			setFieldErrors(errors);
+		const result = await submitRegistration(form);
+
+		if (!result.success) {
+			setFieldErrors(result.fieldErrors || {});
 			setState({
 				success: false,
-				error: Object.values(errors).flat().join(', ') || 'Invalid input',
+				error: result.error || 'Registration failed',
 			});
-			setIsSubmitting(false);
-			return;
-		}
-
-		const res = await fetch(
-			`${process.env.NEXT_PUBLIC_API_URL}/auth/register`,
-			{
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify(parsed.data),
-			}
-		);
-
-		const data = await res.json();
-
-		if (!res.ok) {
-			setState({ success: false, error: data?.error || 'Unknown error' });
 			setIsSubmitting(false);
 			return;
 		}
 
 		setState({ success: true });
 		setIsSubmitting(false);
-
-		localStorage.setItem(
-			'firepit-auth',
-			JSON.stringify({ token: data.token, user: data.user })
-		);
-
 		router.push('/dashboard');
 	};
 

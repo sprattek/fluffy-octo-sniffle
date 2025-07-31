@@ -1,4 +1,4 @@
-import { object, string } from 'zod';
+import { object, string, z } from 'zod';
 
 export const loginSchema = object({
 	email: string({ required_error: 'Email is required' })
@@ -9,6 +9,7 @@ export const loginSchema = object({
 		.min(8, 'Password must be more than 8 characters')
 		.max(32, 'Password must be less than 32 characters'),
 });
+export type LoginSchemaModel = z.infer<typeof loginSchema>;
 
 export const registerSchema = object({
 	name: string({ required_error: 'Name is required' }).min(
@@ -32,9 +33,11 @@ export const registerSchema = object({
 	message: 'Passwords do not match',
 	path: ['passwordConfirm'],
 });
+export type RegisterSchemaModel = z.infer<typeof registerSchema>;
 
 export const passwordResetSchema = object({
 	email: string({ required_error: 'Email is required' })
 		.min(3, 'Email is required')
 		.email('Invalid email'),
 });
+export type PasswordResetSchemaModel = z.infer<typeof passwordResetSchema>;

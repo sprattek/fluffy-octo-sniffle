@@ -1,4 +1,4 @@
-import { logout } from './logout';
+import { logout } from '@/app/auth/actions';
 import { Button } from '@workspace/ui/components/button';
 import { LogOut } from 'lucide-react';
 

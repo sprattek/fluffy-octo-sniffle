@@ -1,9 +1,9 @@
 'use client';
 
+import { submitLogin } from '@/app/login/actions';
 import { Button } from '@workspace/ui/components/button';
 import { Input } from '@workspace/ui/components/input';
 import { Label } from '@workspace/ui/components/label';
-import { loginSchema } from '@workspace/validators';
 import { Loader2Icon } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -47,40 +47,20 @@ export function CredentialsLogin() {
 		setIsSubmitting(true);
 		e.preventDefault();
 
-		const parsed = loginSchema.safeParse(form);
-		if (!parsed.success) {
-			const errors = parsed.error.flatten().fieldErrors;
-			setFieldErrors(errors);
+		const result = await submitLogin(form);
+
+		if (!result.success) {
+			setFieldErrors(result.fieldErrors || {});
 			setState({
 				success: false,
-				error: Object.values(errors).flat().join(', ') || 'Invalid input',
+				error: result.error || 'Login failed',
 			});
-			setIsSubmitting(false);
-			return;
-		}
-
-		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify(parsed.data),
-		});
-
-		const data = await res.json();
-
-		if (!res.ok) {
-			setState({ success: false, error: data?.error || 'Unknown error' });
 			setIsSubmitting(false);
 			return;
 		}
 
 		setState({ success: true });
 		setIsSubmitting(false);
-
-		localStorage.setItem(
-			'firepit-auth',
-			JSON.stringify({ token: data.token, user: data.user })
-		);
-
 		router.push('/dashboard');
 	};
 

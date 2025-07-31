@@ -1,5 +1,6 @@
 'use client';
 
+import { submitGoogleLogin } from '@/app/auth/actions';
 import { Button } from '@workspace/ui/components/button';
 import { Loader2Icon, Mail } from 'lucide-react';
 import { useState } from 'react';
@@ -9,7 +10,7 @@ export function GoogleLogin() {
 
 	const handleLogin = async () => {
 		setLoading(true); // UI updates immediately
-		window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/auth/google`;
+		submitGoogleLogin();
 	};
 
 	return (

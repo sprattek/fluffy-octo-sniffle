@@ -1,13 +1,10 @@
 'use client';
 
-import {
-	passwordResetSchema,
-	PasswordResetSchemaModel,
-} from '@workspace/validators';
+import { registerSchema, RegisterSchemaModel } from '@workspace/validators';
 import { toast } from 'sonner';
 
-export async function submitPasswordReset(form: PasswordResetSchemaModel) {
-	const parsed = passwordResetSchema.safeParse(form);
+export async function submitRegistration(form: RegisterSchemaModel) {
+	const parsed = registerSchema.safeParse(form);
 
 	if (!parsed.success) {
 		const errors = parsed.error.flatten().fieldErrors;
@@ -25,7 +22,7 @@ export async function submitPasswordReset(form: PasswordResetSchemaModel) {
 
 	try {
 		const res = await fetch(
-			`${process.env.NEXT_PUBLIC_API_URL}/auth/forgot-password`,
+			`${process.env.NEXT_PUBLIC_API_URL}/auth/register`,
 			{
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
@@ -38,16 +35,23 @@ export async function submitPasswordReset(form: PasswordResetSchemaModel) {
 		if (!res.ok) {
 			return {
 				success: false,
-				error: data?.error || 'Password reset failed',
+				error: data?.error || 'Registration failed',
 			};
 		}
 
+		localStorage.setItem(
+			'firepit-auth',
+			JSON.stringify({ token: data.token, user: data.user })
+		);
+
 		return {
 			success: true,
+			user: data.user,
+			token: data.token,
 		};
 	} catch (err) {
-		console.error('[submitPasswordReset ERROR]', err);
-		toast.error('Password reset failed', {
+		console.error('[submitRegistration ERROR]', err);
+		toast.error('Registration failed', {
 			description: 'Something went wrong. Please try again.',
 		});
 		return { success: false, error: 'Something went wrong' };

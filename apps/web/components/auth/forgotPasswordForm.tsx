@@ -15,7 +15,7 @@ import { toast } from 'sonner';
 import { Button } from '@workspace/ui/components/button';
 import { Loader2Icon } from 'lucide-react';
 import Link from 'next/link';
-import { passwordResetSchema } from '@workspace/validators';
+import { submitPasswordReset } from '@/app/forgot-password/actions';
 
 const initialState: { success: boolean; error?: string } = { success: false };
 
@@ -54,44 +54,20 @@ export function ForgotPasswordForm({
 		setIsSubmitting(true);
 		e.preventDefault();
 
-		const parsed = passwordResetSchema.safeParse(form);
-		if (!parsed.success) {
-			const errors = parsed.error.flatten().fieldErrors;
-			setFieldErrors(errors);
+		const result = await submitPasswordReset(form);
+
+		if (!result.success) {
+			setFieldErrors(result.fieldErrors || {});
 			setState({
 				success: false,
-				error: Object.values(errors).flat().join(', ') || 'Invalid input',
+				error: result.error || '{Password reset} failed',
 			});
-			setIsSubmitting(false);
-			return;
-		}
-
-		const res = await fetch(
-			`${process.env.NEXT_PUBLIC_API_URL}/auth/forgot-password`,
-			{
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify(parsed.data),
-			}
-		);
-
-		const data = await res.json();
-
-		if (!res.ok) {
-			setState({ success: false, error: data?.error || 'Unknown error' });
 			setIsSubmitting(false);
 			return;
 		}
 
 		setState({ success: true });
 		setIsSubmitting(false);
-
-		/*localStorage.setItem(
-				'firepit-auth',
-				JSON.stringify({ token: data.token, user: data.user })
-			);*/
-
-		// router.push('/dashboard');
 	};
 
 	return (
@@ -101,8 +77,8 @@ export function ForgotPasswordForm({
 					<CardTitle className='text-xl'>Forgot Password?</CardTitle>
 					<CardDescription>
 						{!state.success
-							? `No worries, we'll send you password reset link`
-							: `We've sent password reset link to ${form.email}`}
+							? `No worries, we'll send you an access link`
+							: `We've sent access link to ${form.email}`}
 					</CardDescription>
 				</CardHeader>
 				<CardContent className='grid gap-4'>
@@ -134,7 +110,7 @@ export function ForgotPasswordForm({
 									{isSubmitting ? (
 										<Loader2Icon className='animate-spin' />
 									) : (
-										'Reset my password'
+										'Send me an access link'
 									)}
 								</Button>
 							</div>

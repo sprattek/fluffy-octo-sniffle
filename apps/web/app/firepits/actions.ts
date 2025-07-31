@@ -1,65 +1,45 @@
-'use server';
+'use client';
 
-import { auth } from '@/auth';
-import { firepitSchema, FirepitSchemaModel } from '@/lib/validations/firepit';
-import { prisma } from '@workspace/database';
+import { firepitSchema, FirepitSchemaModel } from '@workspace/validators';
+import { toast } from 'sonner';
 
-type ActionResult = { success: true } | { success: false; error: string };
-
-const createFirepit = async ({
-	data,
-}: {
-	data: FirepitSchemaModel;
-}): Promise<ActionResult> => {
-	const session = await auth();
-
-	if (!session?.user?.id) {
-		return {
-			success: false,
-			error: 'You must be logged in to create a firepit',
-		};
-	}
-
+export async function submitFirepit(data: FirepitSchemaModel, token: string) {
 	const parsed = firepitSchema.safeParse(data);
 
 	if (!parsed.success) {
 		const errors = parsed.error.flatten().fieldErrors;
+		const firstError =
+			Object.values(errors)
+				.flat()
+				.find((e) => typeof e === 'string') || 'Invalid input';
+
 		return {
 			success: false,
-			error: Object.values(errors).flat().join(', ') || 'Invalid input',
+			error: firstError,
 		};
 	}
 
 	try {
-		const firepit = await prisma.firepit.create({
-			data: {
-				name: parsed.data.name,
-				description: parsed.data.description,
-				latitude: parsed.data.latitude,
-				longitude: parsed.data.longitude,
-				city: parsed.data.city,
-				pricePerDay: parsed.data.pricePerDay,
-				optimalNumberOfVisitors: parsed.data.optimalNumberOfVisitors,
-				createdById: session.user.id,
+		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/firepits`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${token}`,
 			},
+			body: JSON.stringify(data),
 		});
 
-		await prisma.$executeRaw`
-      UPDATE "Firepit"
-      SET location = ST_SetSRID(ST_MakePoint(${parsed.data.longitude}, ${parsed.data.latitude}), 4326)
-      WHERE id = ${firepit.id};
-    `;
+		if (!res.ok) {
+			const body = await res.json();
+			throw new Error(body?.error || 'Server error');
+		}
 
-		return {
-			success: true,
-		};
-	} catch (err: any) {
-		console.error('[ERROR]', err);
-		return {
-			success: false,
-			error: 'Something went wrong. Please try again later.',
-		};
+		return { success: true };
+	} catch (err) {
+		console.error('[submitFirepit ERROR]', err);
+		toast.error('Could not create firepit', {
+			description: err instanceof Error ? err.message : 'Unknown error',
+		});
+		return { success: false, error: 'Something went wrong. Please try again.' };
 	}
-};
-
-export { createFirepit };
+}
